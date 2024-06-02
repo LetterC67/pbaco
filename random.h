@@ -1,0 +1,10 @@
+#ifndef RANDOM_H
+#define RANDOM_H
+
+#include <bits/stdc++.h>
+using namespace std;
+
+extern mt19937 rng;
+extern uniform_real_distribution<double> rng_real;
+
+#endif
