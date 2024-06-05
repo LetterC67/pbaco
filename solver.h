@@ -5,6 +5,7 @@
 #include "graph.h"
 #include "parameters.h"
 #include "ant.h"
+#include "population.h"
 
 using namespace std;
 
@@ -13,10 +14,11 @@ struct mTSPSolver{
     Graph graph;
     int n;
     int salesmen;
+    int iteration = 1;
     double TAU_MIN;
 
     Ant gbest;
-
+    Population population;
     vector<vector<double>> pheromone;
 
 
@@ -26,6 +28,7 @@ struct mTSPSolver{
         pheromone.resize(n);
         for(auto &p : pheromone)
             p = vector<double>(n, TAU_MAX);
+        population = Population(n, salesmen);
     }
 
     void solve();

@@ -7,4 +7,6 @@ using namespace std;
 extern mt19937 rng;
 extern uniform_real_distribution<double> rng_real;
 
+int rand_range(int l, int r);
+
 #endif

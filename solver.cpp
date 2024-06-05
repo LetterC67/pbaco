@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <chrono>
 #include "graph.h"
 #include "solver.h"
 #include "ant.h"
@@ -7,51 +8,74 @@
 
 using namespace std;
 
+// pair<int, int> mTSPSolver::select_city(Ant &ant, vector<bool> &visited, vector<long double> &sum, vector<vector<pair<int, long double>>> &bucket){
+//     RouletteWheel wheel;
+
+//     for(int salesman = 0; salesman < salesmen; salesman++){
+//         if(!bucket[salesman].size()){
+//             sum[salesman] = 0;
+//             int current_city = ant.tours[salesman].back();
+//             for(int city = 0; city < n; city++){
+//                 if(!visited[city]){
+//                     long double prob = pheromone[current_city][city] * 1. / powl(graph.distance[current_city][city] * max(1., ant.tours[salesman].cost), BETA);
+//                     //cout << pheromone[current_city][city] << endl;
+//                     bucket[salesman].push_back({city, prob});
+//                     sum[salesman] += prob;
+//                 }
+//             }
+//             //cout << "new " << ' ' << current_city << ' ' << sum[salesman] << ' ' << ant.tours[salesman].cost<< endl;
+//         }
+//         wheel.add(sum[salesman]);
+//     }
+
+//     int sm = wheel.spin();
+//     long double bound = rng_real(rng) * sum[sm];
+//     long double accum = 0.;
+
+//     for(auto &p : bucket[sm]){
+//         if(visited[p.first]) continue;
+//         accum += p.second;
+//         if(accum > bound){
+//             int city = p.first;
+//             for(int salesman = 0; salesman < salesmen; salesman++){
+//                 int current_city = ant.tours[salesman].back();
+//                 long double prob = pheromone[current_city][city] * 1. / powl(graph.distance[current_city][city] * max(1., ant.tours[salesman].cost), BETA);
+//                 sum[salesman] -= prob;
+//             }
+//             bucket[sm].clear();
+//             return {sm, city};
+//         }
+//     }
+    
+//     return {-1, -1};
+// }
+
 pair<int, int> mTSPSolver::select_city(Ant &ant, vector<bool> &visited, vector<long double> &sum, vector<vector<pair<int, long double>>> &bucket){
     RouletteWheel wheel;
+    int salesman = ant.shortest_tour_index();
+    // double cost = 1e9;
 
-    for(int salesman = 0; salesman < salesmen; salesman++){
-        if(!bucket[salesman].size()){
-            sum[salesman] = 0;
-            int current_city = ant.tours[salesman].back();
-            for(int city = 0; city < n; city++){
-                if(!visited[city]){
-                    long double prob = pheromone[current_city][city] * 1. / powl(graph.distance[current_city][city] * max(1., ant.tours[salesman].cost), BETA);
-                    //cout << pheromone[current_city][city] << endl;
-                    bucket[salesman].push_back({city, prob});
-                    sum[salesman] += prob;
-                }
-            }
-            //cout << "new " << ' ' << current_city << ' ' << sum[salesman] << ' ' << ant.tours[salesman].cost<< endl;
-        }
-        wheel.add(sum[salesman]);
-    }
+    // for(int i = 0; i < salesmen; i++){
+    //     if(ant.del.count(i) && ant.tours[i].cost < cost){
+    //         cost = ant.tours[i].cost;
+    //         salesman = i;
+    //     }
+    // }
 
-    int sm = wheel.spin();
-    long double bound = rng_real(rng) * sum[sm];
-    long double accum = 0.;
+    int current_city = ant.tours[salesman].back();
 
-   // cout << accum << ' ' << bound << ' ' << sum[sm] << ' '  << sm <<  endl;
-    for(auto &p : bucket[sm]){
-        if(visited[p.first]) continue;
-        accum += p.second;
-        if(accum > bound){
-            int city = p.first;
-            for(int salesman = 0; salesman < salesmen; salesman++){
-                int current_city = ant.tours[salesman].back();
-                long double prob = pheromone[current_city][city] * 1. / powl(graph.distance[current_city][city] * max(1., ant.tours[salesman].cost), BETA);
-                sum[salesman] -= prob;
-             //   cout << sum[salesman] << ' ' << salesman << ' ' << prob << endl;
-            }
-            bucket[sm].clear();
-            return {sm, city};
+    vector<int> candidate;
+    for(int city = 0; city < n; city++){
+        if(!visited[city]){
+            long double prob = pheromone[current_city][city] * 1. / powl(graph.distance[current_city][city], BETA);
+            wheel.add(prob);
+            candidate.push_back(city);
         }
     }
 
+    assert(candidate.size());
 
-  //  cout << accum << ' ' << bound << ' ' << sum[sm] << ' ' << (accum > bound) << endl;
-    
-    return {-1, -1};
+    return {salesman, candidate[wheel.spin()]};
 }
 
 Ant mTSPSolver::build_solution(Ant ant){
@@ -79,6 +103,8 @@ Ant mTSPSolver::build_solution(Ant ant){
     }
 
     ant.end_tour();
+    ant.local_search();
+    ant.calculate_result();
 
     return ant;
 }
@@ -89,8 +115,16 @@ vector<Ant> mTSPSolver::build_solutions(){
 
     #pragma omp parallel for
     for(int ant = 0; ant < ANTS; ant++){
+        Ant a;
+        if(iteration == 1)
+            a = build_solution(Ant(salesmen, &graph.distance));
+        else
+            a = build_solution(trim(population.get()));
+
         #pragma omp critical
-        ants.push_back(build_solution(Ant(salesmen, &graph.distance)));
+        {
+            ants.push_back(a);
+        }
     }
 
     return ants;
@@ -112,17 +146,49 @@ void mTSPSolver::update_pheromone(){
 }
 
 void mTSPSolver::solve(){
-    for(int iteration = 1; iteration <= ITERATIONS; iteration++){
+
+    for(; iteration <= ITERATIONS; iteration++){
+        auto start = chrono::high_resolution_clock::now();
+
+
         auto ants = build_solutions();
+        Ant ibest;
 
         for(auto &ant : ants){
-            if(gbest.min_max_cost - 1e-6 > ant.min_max_cost || (abs(gbest.min_max_cost - ant.min_max_cost) < 1e-6 && gbest.min_sum_cost - 1e-6 > ant.min_sum_cost)){
+            population.add(ant);
+            if(gbest.min_max_cost - 1e-6 > ant.min_max_cost || (abs(gbest.min_max_cost - ant.min_max_cost) < 1e-6 && gbest.sqrt_cost - 1e-6 > ant.sqrt_cost)){
                 gbest = ant;
+            }
+
+            if(ibest.min_max_cost - 1e-6 > ant.min_max_cost || (abs(ibest.min_max_cost - ant.min_max_cost) < 1e-6 && ibest.sqrt_cost - 1e-6 > ant.sqrt_cost)){
+                ibest = ant;
             }
         }
 
         update_pheromone();
 
-        cout << "Iteration " << iteration << ' ' << gbest.min_max_cost << ' ' << gbest.min_sum_cost << endl;
+        population.kill();
+        if(iteration % 10 == 0){
+            for(auto &tour : gbest.tours){
+                for(int &d : tour){
+                    cout << d << ' ';
+                }
+                cout << endl;
+            }
+
+            for(auto &p : population.population){
+                cout << p.min_max_cost << endl;
+            }
+
+            //population.population = {gbest};
+        }
+
+            auto end = chrono::high_resolution_clock::now();
+            double time_taken = 
+      chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+ 
+    time_taken *= 1e-9;
+
+        cout << "Iteration " << iteration << ' ' << gbest.min_max_cost << ' ' << ibest.min_max_cost << ' ' << gbest.min_sum_cost << ' ' <<  time_taken << endl;
     }
 }

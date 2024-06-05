@@ -46,8 +46,10 @@ struct _tour{
 struct Ant{      
     vector<vector<double>> *distance;
     vector<_tour> tours;
+    unordered_set<int> del;
     double min_max_cost;
     double min_sum_cost;
+    double sqrt_cost;
 
     Ant(){
         min_max_cost = 1e9;
@@ -57,11 +59,31 @@ struct Ant{
 
     Ant(int salesmen, vector<vector<double>> *distance): distance(distance){
         tours = vector<_tour>(salesmen);
+        for(int i = 0; i < salesmen; i++) del.insert(i);
     }
     
+    int longest_tour_index();
+    int shortest_tour_index();
+    double tour_length(_tour &tour);
+
     void add(int salesman, int vertex);
     void add(_tour &tour, int vertex);
+    
+    bool swap(_tour &a, _tour &b);
+    bool relocate(_tour &a, _tour &b);
+    bool swap_tail(_tour &a, _tour &b);
+
+    void two_opt(_tour &tour);
+    void or_opt(_tour &tour);
+
+    void intra_tour_optimization();
+    void inter_tour_optimization();
+    void inter_tour_optimization_del();
+    void local_search();
     void end_tour();
+    void calculate_result();
 };
+
+Ant trim(Ant ant);
 
 #endif
