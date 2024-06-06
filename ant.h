@@ -65,6 +65,7 @@ struct Ant{
     int longest_tour_index();
     int shortest_tour_index();
     double tour_length(_tour &tour);
+    double tour_distance(_tour &a, _tour &b);
 
     void add(int salesman, int vertex);
     void add(_tour &tour, int vertex);
@@ -75,6 +76,8 @@ struct Ant{
 
     void two_opt(_tour &tour);
     void or_opt(_tour &tour);
+    void run_dp(_tour &x, _tour &y);
+    void dp();
 
     void intra_tour_optimization();
     void inter_tour_optimization();

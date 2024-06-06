@@ -15,7 +15,14 @@ void Graph::load_data(const string &file){
     ifstream ifs(file, ifstream::in);
     string nil;
 
-    getline(ifs, nil);
+    ifs >> nil; 
+    if(nil.back() != ':') ifs >> nil;
+
+
+    ifs >> NAME;
+
+    ifs.ignore();
+
     getline(ifs, nil);
     getline(ifs, nil);
     

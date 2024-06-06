@@ -6,7 +6,7 @@ using namespace std;
 
 struct Graph{
     int n;
-    string EDGE_WEIGHT_TYPE;
+    string EDGE_WEIGHT_TYPE, NAME;
     vector<vector<double>> distance;
     vector<double> x;
     vector<double> y;

@@ -5,8 +5,15 @@
 #include "ant.h"
 #include "parameters.h"
 #include "utils.h"
+#include "stat.h"
 
 using namespace std;
+
+inline double powl(double x, int y){
+    double res = 1;
+    while(y--) res *= x;
+    return res;
+}
 
 // pair<int, int> mTSPSolver::select_city(Ant &ant, vector<bool> &visited, vector<long double> &sum, vector<vector<pair<int, long double>>> &bucket){
 //     RouletteWheel wheel;
@@ -49,6 +56,8 @@ using namespace std;
     
 //     return {-1, -1};
 // }
+
+
 
 pair<int, int> mTSPSolver::select_city(Ant &ant, vector<bool> &visited, vector<long double> &sum, vector<vector<pair<int, long double>>> &bucket){
     RouletteWheel wheel;
@@ -111,12 +120,12 @@ Ant mTSPSolver::build_solution(Ant ant){
 
 vector<Ant> mTSPSolver::build_solutions(){
     vector<Ant> ants;
-    const int ANTS = ANTS_MULTIPLIER * n;
+    const int ANTS = max(MIN_ANT, (int)(ANTS_MULTIPLIER * n));
 
     #pragma omp parallel for
     for(int ant = 0; ant < ANTS; ant++){
         Ant a;
-        if(iteration == 1)
+        if(!population.population.size())
             a = build_solution(Ant(salesmen, &graph.distance));
         else
             a = build_solution(trim(population.get()));
@@ -146,7 +155,6 @@ void mTSPSolver::update_pheromone(){
 }
 
 void mTSPSolver::solve(){
-
     for(; iteration <= ITERATIONS; iteration++){
         auto start = chrono::high_resolution_clock::now();
 
@@ -156,18 +164,28 @@ void mTSPSolver::solve(){
 
         for(auto &ant : ants){
             population.add(ant);
-            if(gbest.min_max_cost - 1e-6 > ant.min_max_cost || (abs(gbest.min_max_cost - ant.min_max_cost) < 1e-6 && gbest.sqrt_cost - 1e-6 > ant.sqrt_cost)){
+            if(gbest.min_max_cost - 1e-4 > ant.min_max_cost || (abs(gbest.min_max_cost - ant.min_max_cost) < 1e-4 && gbest.sqrt_cost - 1e-4 > ant.sqrt_cost)){
                 gbest = ant;
+                no_improve = 0;
             }
 
             if(ibest.min_max_cost - 1e-6 > ant.min_max_cost || (abs(ibest.min_max_cost - ant.min_max_cost) < 1e-6 && ibest.sqrt_cost - 1e-6 > ant.sqrt_cost)){
                 ibest = ant;
             }
         }
+        no_improve++;
 
         update_pheromone();
 
+            
         population.kill();
+        if(no_improve > MAX_STAGNATION){
+            gbest.dp();
+            no_improve = 0;
+        }
+
+        add(iteration - 1, gbest.min_max_cost);
+
         if(iteration % 10 == 0){
             for(auto &tour : gbest.tours){
                 for(int &d : tour){
@@ -189,6 +207,6 @@ void mTSPSolver::solve(){
  
     time_taken *= 1e-9;
 
-        cout << "Iteration " << iteration << ' ' << gbest.min_max_cost << ' ' << ibest.min_max_cost << ' ' << gbest.min_sum_cost << ' ' <<  time_taken << endl;
+        cout << "Iteration " << iteration << ' ' << gbest.min_max_cost << ' ' << ibest.min_max_cost << ' ' << gbest.min_sum_cost << ' ' << no_improve << ' ' << time_taken << endl;
     }
 }

@@ -43,7 +43,7 @@ bool Ant::swap(_tour &a, _tour &b){
         for(int j = 1; j < b.size() - 1; j++){
             double delta_a = -(*distance)[a[i - 1]][a[i]] - (*distance)[a[i]][a[i + 1]] + (*distance)[a[i - 1]][b[j]] + (*distance)[b[j]][a[i + 1]];
             double delta_b = -(*distance)[b[j - 1]][b[j]] - (*distance)[b[j]][b[j + 1]] + (*distance)[b[j - 1]][a[i]] + (*distance)[a[i]][b[j + 1]]; 
-            if(max(a.cost + delta_a, b.cost + delta_b) < max(a.cost, b.cost)){
+            if(delta_a < 0 && delta_b < 0){
                 swapped = true;
                 std::swap(a[i], b[j]);
                 a.cost += delta_a;
@@ -279,7 +279,7 @@ void Ant::local_search(){
     // for(int i = 0; i < 3; i++)
     for(int j = 0; j < INTER_TOUR_INTERATIONS; j++)
         inter_tour_optimization_del();
-     intra_tour_optimization();
+    intra_tour_optimization();
 
     for(int i = 0; i < LOCAL_SEARCH_ITERATIONS; i++){
         // inter_tour_optimization_del();

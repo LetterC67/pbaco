@@ -15,6 +15,7 @@ struct mTSPSolver{
     int n;
     int salesmen;
     int iteration = 1;
+    int no_improve = 0;
     double TAU_MIN;
 
     Ant gbest;

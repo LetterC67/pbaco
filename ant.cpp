@@ -34,7 +34,7 @@ void Ant::calculate_result(){
     sqrt_cost = sqrt(sqrt_cost);
 }
 
-double tour_distance(_tour& a, _tour &b, vector<vector<double>> *distance){
+double Ant::tour_distance(_tour& a, _tour &b){
     double x = 0;
     for(int i = 1; i < a.size() - 1; i++){
         for(int j = 1; j < b.size() - 1; j++){
@@ -46,14 +46,15 @@ double tour_distance(_tour& a, _tour &b, vector<vector<double>> *distance){
 
 Ant trim(Ant ant){
     int salesmen = ant.tours.size();
-    vector<vector<int>> dis(salesmen, vector<int>(salesmen));
-    for(int i = 0; i < salesmen; i++)
-        for(int j = i + 1; j < salesmen; j++)
-            dis[i][j] = dis[j][i] = tour_distance(ant.tours[i], ant.tours[j], ant.distance);
             
-    int del_count = rng() % salesmen;
-    int last_del = ant.longest_tour_index();
+    int del_count = rng() % ((salesmen + 1) / 3);
+    int last_del = rng() % salesmen;
     unordered_set<int> del_list = {last_del};
+
+    vector<vector<int>> dis(salesmen, vector<int>(salesmen));
+    for(int i = last_del; i <= last_del; i++)
+        for(int j = i + 1; j < salesmen; j++)
+            dis[i][j] = dis[j][i] = ant.tour_distance(ant.tours[i], ant.tours[j]);
 
     while(del_count--){
         int next_del = 0;
