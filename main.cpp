@@ -34,4 +34,5 @@ int main(int argc, char **args){
     }
 
     write_convergence(variation, graph, salesmen);
+    write_result_complete(variation, graph, salesmen);
 }

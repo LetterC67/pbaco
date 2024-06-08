@@ -52,3 +52,11 @@ void write_convergence(string &variation, Graph &graph, int salesmen){
 
     outputFile.close();
 }
+
+void write_result_complete(string &variation, Graph &graph, int salesmen){
+    std::ofstream outputFile("result/" + graph.NAME + "_" + to_string(salesmen) + "_" + variation, std::ios::app);
+    
+    outputFile <<"Avg: " << avg / double(cnt) << endl;
+    outputFile <<"Best: " << best << endl;
+    outputFile <<"Worse: " << worse << endl;
+}

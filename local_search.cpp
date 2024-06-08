@@ -116,6 +116,28 @@ bool Ant::swap_tail(_tour &a, _tour &b){
 
                 return true;
             }
+
+            new_cost_a = pref_a[i - 1] + pref_b[j - 1] + (*distance)[a[i - 1]][b[j - 1]];
+            new_cost_b = suf_a[i] + suf_b[j] + (*distance)[a[i]][b[j]];
+
+            if(max(new_cost_a, new_cost_b) < max(a.cost, b.cost)){
+                a.cost = new_cost_a;
+                b.cost = new_cost_b;
+
+                vector<int> c = vector<int>(a.tour.begin() + i, a.tour.end()),
+                            d = vector<int>(b.tour.begin() + j, b.tour.end());
+                a.tour.erase(a.tour.begin() + i, a.tour.end());
+                b.tour.erase(b.tour.begin() + j, b.tour.end());
+
+                reverse(b.begin(), b.end());;
+                a.tour.insert(a.end(), b.begin(), b.end());
+                
+                reverse(c.begin(), c.end());
+                b.tour = c;
+                b.tour.insert(b.end(), d.begin(), d.end());
+
+                return true;
+            }
         }
     }
 
@@ -186,38 +208,35 @@ void Ant::inter_tour_optimization_del(){
     vector<int> can(del.begin(),del.end());
     shuffle(can.begin(), can.end(), rng);
 
-    bool loop = true;
-    while(loop){
-        for(int i = 0; i < can.size(); i++){
-            for(int j = 0; j < can.size(); j++){
-                if(i != j)
-                    loop |= swap(tours[can[i]], tours[can[j]]);
-            }
+    bool loop = false;
+
+    for(int i = 0; i < can.size(); i++){
+        for(int j = 0; j < can.size(); j++){
+            if(i != j)
+                loop |= swap(tours[can[i]], tours[can[j]]);
         }
-        loop = false;
     }
 
-    loop=true;
-    while(loop){
-        for(int i = 0; i < can.size(); i++){
-            for(int j = 0; j < can.size(); j++){
-                if(i != j)
-                    loop |= relocate(tours[can[i]], tours[can[j]]);
-            }
+    for(int i = 0; i < can.size(); i++){
+        for(int j = 0; j < can.size(); j++){
+            if(i != j)
+                loop |= relocate(tours[can[i]], tours[can[j]]);
         }
-        loop = false;
     }
     
     
-    loop=true;
-    while(loop){
-        for(int i = 0; i < can.size(); i++){
-            for(int j = 0; j < can.size(); j++){
-                if(i != j)
-                    loop |= swap_tail(tours[can[i]], tours[can[j]]);
-            }
+    for(int i = 0; i < can.size(); i++){
+        for(int j = 0; j < can.size(); j++){
+            if(i != j)
+                loop |= swap_tail(tours[can[i]], tours[can[j]]);
         }
-        loop = false;
+    }
+
+    for(int i = 0; i < can.size(); i++){
+        for(int j = 0; j < can.size(); j++){
+            if(i != j)
+                loop |= swap_tail(tours[can[i]], tours[can[j]]);
+        }
     }
 }
 
@@ -229,45 +248,27 @@ void Ant::inter_tour_optimization(){
 
     shuffle(ord.begin(), ord.end(), rng);
     
-    bool loop = true;
-    while(loop){
-        int tour = longest_tour_index();
+    bool loop = false;
 
-        for(int i = 0; i < tours.size(); i++){
-            for(int tour = 0; tour < tours.size(); tour++)
-            if(tour != i)
-                loop |= swap(tours[ord[i]], tours[ord[tour]]);   
-        }
-        loop = false;
-    }
-
-    loop = true;
-    while(loop){
-        int tour = longest_tour_index();
-
-        for(int i = 0; i < tours.size(); i++){
-            for(int tour = 0; tour < tours.size(); tour++)
-            if(tour != i)
-                loop |= relocate(tours[ord[i]], tours[ord[tour]]); 
-        }
-        loop = false;
-    }
-
-
-    loop = true;
-    while(loop){
-        int tour = longest_tour_index();
-
-        for(int i = 0; i < tours.size(); i++){
-            for(int tour = 0; tour < tours.size(); tour++)
-            if(tour != i)
-                loop |= swap_tail(tours[ord[i]], tours[ord[tour]]); 
-        }
-        loop = false;
+    for(int i = 0; i < tours.size(); i++){
+        for(int tour = 0; tour < tours.size(); tour++)
+        if(tour != i)
+            loop |= swap(tours[ord[i]], tours[ord[tour]]);   
     }
 
     for(int i = 0; i < tours.size(); i++){
-        reverse(tours[i].begin(), tours[i].end());
+        for(int tour = 0; tour < tours.size(); tour++)
+        if(tour != i)
+            loop |= relocate(tours[ord[i]], tours[ord[tour]]); 
+    }
+
+    for(int i = 0; i < tours.size(); i++){
+        for(int tour = 0; tour < tours.size(); tour++)
+        if(tour != i)
+            loop |= swap_tail(tours[ord[i]], tours[ord[tour]]); 
+    }
+
+    for(int i = 0; i < tours.size(); i++){
         for(int tour = 0; tour < tours.size(); tour++)
         if(tour != i)
             loop |= swap_tail(tours[ord[i]], tours[ord[tour]]); 

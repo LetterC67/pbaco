@@ -47,7 +47,7 @@ double Ant::tour_distance(_tour& a, _tour &b){
 Ant trim(Ant ant){
     int salesmen = ant.tours.size();
             
-    int del_count = rng() % ((salesmen + 1) / 3);
+    int del_count = rng() % ((salesmen + 1) / 2);
     int last_del = rng() % salesmen;
     unordered_set<int> del_list = {last_del};
 
