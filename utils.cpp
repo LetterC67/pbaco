@@ -2,7 +2,7 @@
 #include "utils.h"
 using namespace std;
 
-void RouletteWheel::add(long double probability){
+void RouletteWheel::add(double probability){
     probabilities.push_back(probability);
     sum += probability;
     if(mx < probability){
@@ -12,8 +12,8 @@ void RouletteWheel::add(long double probability){
 }
 
 int RouletteWheel::spin(){
-    long double threshold = rng_real(rng);
-    long double accumulation = 0.;
+    double threshold = rng_real(rng);
+    double accumulation = 0.;
 
     for(int i = 0; i < probabilities.size(); i++){
         accumulation += probabilities[i];

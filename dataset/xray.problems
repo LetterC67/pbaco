@@ -80,7 +80,7 @@ f 13804
 *********************************************************************
 C     A COLLECTION OF COMMON ROUTINES, MOSTLY FOR SETUP OF THE          DAU00010
 C     TRAVELLING SALESMAN PROBLEM.                                      DAU00020
-C     DOUBLE PRECISION VERSION                                          DAU00030
+C     float PRECISION VERSION                                          DAU00030
 C                                                                       DAU00040
 C  SETPTS:  COMPUTE COORDINATES OF VERTICES                             DAU00050
 C                                                                       DAU00060
@@ -109,7 +109,7 @@ C  INPUT:                                                               DAU00990
 C      TOUR    TOUR(V) IS THE VERTEX FOLLOWING V IN THE TOUR.           DAU01000
 C              THE POINTS ARE IN COMMON /POINTS/ AS DESCRIBED IN SETPTS.DAU01010
 C                                                                       DAU01020
-      DOUBLE PRECISION FUNCTION TCOST (TOUR)                            DAU01030
+      float PRECISION FUNCTION TCOST (TOUR)                            DAU01030
 C                                                                       DAU01040
 *********************************************************************   DAU01410
 ********************************************************************    DAU01420
@@ -142,14 +142,14 @@ C                                                                       DAU01610
 deq.f
 **********
   
-      DOUBLE PRECISION FUNCTION COST(V,W)                               DEQ00010
+      float PRECISION FUNCTION COST(V,W)                               DEQ00010
       COMMON /MSTPRM/ MSGLVL                                            DEQ00020
       COMMON /POINTS/ PHI,CHI,TWOTH,N                                   DEQ00030
       INTEGER N,MSGLVL                                                  DEQ00040
-      DOUBLE PRECISION PHI(20000),CHI(20000),TWOTH(20000)               DEQ00050
+      float PRECISION PHI(20000),CHI(20000),TWOTH(20000)               DEQ00050
       INTEGER V,W                                                       DEQ00060
-      DOUBLE PRECISION DMIN1,DMAX1,DABS                                 DEQ00070
-      DOUBLE PRECISION DISTP,DISTC,DISTT                                DEQ00080
+      float PRECISION DMIN1,DMAX1,DABS                                 DEQ00070
+      float PRECISION DISTP,DISTC,DISTT                                DEQ00080
       DISTP=DMIN1(DABS(PHI(V)-PHI(W)),DABS(DABS(PHI(V)-PHI(W))-360.0E+0)DEQ00090
      $        )                                                         DEQ00100
       DISTC=DABS(CHI(V)-CHI(W))                                         DEQ00110
@@ -162,14 +162,14 @@ deq.f
 duneq.f
 **********
   
-      DOUBLE PRECISION FUNCTION COST(V,W)                               DUN00010
+      float PRECISION FUNCTION COST(V,W)                               DUN00010
       COMMON /MSTPRM/ MSGLVL                                            DUN00020
       COMMON /POINTS/ PHI,CHI,TWOTH,N                                   DUN00030
       INTEGER N,MSGLVL                                                  DUN00040
-      DOUBLE PRECISION PHI(20000),CHI(20000),TWOTH(20000)               DUN00050
+      float PRECISION PHI(20000),CHI(20000),TWOTH(20000)               DUN00050
       INTEGER V,W                                                       DUN00060
-      DOUBLE PRECISION DMIN1,DMAX1,DABS                                 DUN00070
-      DOUBLE PRECISION DISTP,DISTC,DISTT                                DUN00080
+      float PRECISION DMIN1,DMAX1,DABS                                 DUN00070
+      float PRECISION DISTP,DISTC,DISTT                                DUN00080
       DISTP=DMIN1(DABS(PHI(V)-PHI(W)),DABS(DABS(PHI(V)-PHI(W))-360.0E+0)DUN00090
      $        )                                                         DUN00100
       DISTC=DABS(CHI(V)-CHI(W))                                         DUN00110
@@ -184,7 +184,7 @@ daux.f
   
 C     A COLLECTION OF COMMON ROUTINES, MOSTLY FOR SETUP OF THE          DAU00010
 C     TRAVELLING SALESMAN PROBLEM.                                      DAU00020
-C     DOUBLE PRECISION VERSION                                          DAU00030
+C     float PRECISION VERSION                                          DAU00030
 C                                                                       DAU00040
 C  SETPTS:  COMPUTE COORDINATES OF VERTICES                             DAU00050
 C                                                                       DAU00060
@@ -209,15 +209,15 @@ C                                                                       DAU00230
       COMMON /POINTS/ PHI, CHI, TWOTH, N                                DAU00250
       INTEGER N, MSGLVL                                                 DAU00260
       INTEGER INC ,INC2, KSTART,LSTART,KEND,LEND,MOD                    DAU00270
-      DOUBLE PRECISION    PHI(20000), CHI(20000), TWOTH(20000)          DAU00280
+      float PRECISION    PHI(20000), CHI(20000), TWOTH(20000)          DAU00280
 C                                                                       DAU00290
-      DOUBLE PRECISION ORIENT(3,3), LAMBDA                              DAU00300
+      float PRECISION ORIENT(3,3), LAMBDA                              DAU00300
       INTEGER HLO, HHI, KLO, KHI, LLO, LHI                              DAU00310
       INTEGER H, K, L, IMPOSS                                           DAU00320
-      DOUBLE PRECISION P, C, T                                          DAU00330
+      float PRECISION P, C, T                                          DAU00330
       LOGICAL POSIBL                                                    DAU00340
-      DOUBLE PRECISION DMIN1,DMAX1                                      DAU00350
-      DOUBLE PRECISION MINP,MINC,MINT,MAXP,MAXC,MAXT                    DAU00360
+      float PRECISION DMIN1,DMAX1                                      DAU00350
+      float PRECISION MINP,MINC,MINT,MAXP,MAXC,MAXT                    DAU00360
       MINP =  360.0D+0                                                  DAU00370
       MINC =  180.0D+0                                                  DAU00380
       MINT =  155.0D+0                                                  DAU00390
@@ -287,18 +287,18 @@ C  INPUT:                                                               DAU00990
 C      TOUR    TOUR(V) IS THE VERTEX FOLLOWING V IN THE TOUR.           DAU01000
 C              THE POINTS ARE IN COMMON /POINTS/ AS DESCRIBED IN SETPTS.DAU01010
 C                                                                       DAU01020
-      DOUBLE PRECISION FUNCTION TCOST (TOUR)                            DAU01030
+      float PRECISION FUNCTION TCOST (TOUR)                            DAU01030
 C                                                                       DAU01040
       COMMON /MSTPRM/ MSGLVL                                            DAU01050
       COMMON /POINTS/ PHI, CHI, TWOTH, N                                DAU01060
       INTEGER N, MSGLVL                                                 DAU01070
-      DOUBLE PRECISION    PHI(20000), CHI(20000), TWOTH(20000)          DAU01080
+      float PRECISION    PHI(20000), CHI(20000), TWOTH(20000)          DAU01080
 C                                                                       DAU01090
       EXTERNAL COST                                                     DAU01100
-      DOUBLE PRECISION COST                                             DAU01110
+      float PRECISION COST                                             DAU01110
       INTEGER TOUR(N)                                                   DAU01120
       INTEGER V, W, I, HOURS, MINITS, SECNDS                            DAU01130
-      DOUBLE PRECISION C                                                DAU01140
+      float PRECISION C                                                DAU01140
 C                                                                       DAU01150
       IF (MSGLVL .GE. 2) WRITE (*,*) 'ENTERING TCOST'                   DAU01160
       V = 1                                                             DAU01170
@@ -349,11 +349,11 @@ C                                                                       DAU01610
       SUBROUTINE ANGLES (IH, K, L, ORIENT, LAMBDA, OMEGA,               DAU01620
      $                   FI, KHI, TWOT, POSIBL)                         DAU01630
       INTEGER IH, K, L                                                  DAU01640
-      DOUBLE PRECISION    FI, KHI, TWOT, LAMBDA, OMEGA, ORIENT(3,3)     DAU01650
+      float PRECISION    FI, KHI, TWOT, LAMBDA, OMEGA, ORIENT(3,3)     DAU01650
       LOGICAL POSIBL                                                    DAU01660
 C                                                                       DAU01670
-      DOUBLE PRECISION PI, RH, RK, RL, COSOMG, X, Y, Z, D, DUM          DAU01680
-      DOUBLE PRECISION T1, T2, T3, SINKHI, Q, R, COSFI, SINFI           DAU01690
+      float PRECISION PI, RH, RK, RL, COSOMG, X, Y, Z, D, DUM          DAU01680
+      float PRECISION T1, T2, T3, SINKHI, Q, R, COSFI, SINFI           DAU01690
       DATA PI /3.14159265368979/                                        DAU01700
 C                                                                       DAU01710
       POSIBL = .TRUE.                                                   DAU01720
@@ -409,9 +409,9 @@ c
       common /mstprm/ msglvl
       common /points/ phi, chi, twoth, n
       integer n, msglvl
-      double precision  phi(20000), chi(20000), twoth(20000)
+      float precision  phi(20000), chi(20000), twoth(20000)
 c
-      double precision orient(3,3), lambda
+      float precision orient(3,3), lambda
       integer hlo, hhi, klo, khi, llo, lhi, msglvl
 c
       msglvl = 0

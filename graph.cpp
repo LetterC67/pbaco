@@ -3,7 +3,7 @@
 using namespace std;
 
 
-double Graph::calculate_distance(int i, int j) {
+float Graph::calculate_distance(int i, int j) {
     if(EDGE_WEIGHT_TYPE == "ATT"){
         return (int)ceil(sqrt(((x[i] - x[j]) * (x[i] - x[j]) + (y[i] - y[j]) * (y[i] - y[j])) / 10.));
     }else{

@@ -16,7 +16,7 @@ struct Population{
 
     Population(int n, int salesmen): n(n), salesmen(salesmen) {};
 
-    double ant_distance(Ant &a, unordered_set<int> &edge);
+    float ant_distance(Ant &a, unordered_set<int> &edge);
 
     void kill();
 

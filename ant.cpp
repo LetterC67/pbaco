@@ -34,14 +34,14 @@ void Ant::calculate_result(){
     sqrt_cost = sqrt(sqrt_cost);
 }
 
-double Ant::tour_distance(_tour& a, _tour &b){
-    double x = 0;
+float Ant::tour_distance(_tour& a, _tour &b){
+    float x = 0;
     for(int i = 1; i < a.size() - 1; i++){
         for(int j = 1; j < b.size() - 1; j++){
             x += (*distance)[a[i]][b[j]];
         }
     }
-    return x / double(a.size() - 2) / double(b.size() - 2);
+    return x / float(a.size() - 2) / float(b.size() - 2);
 }
 
 Ant trim(Ant ant){
@@ -58,7 +58,7 @@ Ant trim(Ant ant){
 
     while(del_count--){
         int next_del = 0;
-        double d = 1e9;
+        float d = 1e9;
 
         for(int i = 0; i < salesmen; i++){
             if(!del_list.count(i) && dis[last_del][i] < d){

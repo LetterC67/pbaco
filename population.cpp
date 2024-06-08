@@ -4,23 +4,23 @@
 #include "parameters.h"
 #include "population.h"
 
-double Population::ant_distance(Ant &a, unordered_set<int> &edge){
-    double cnt = 0;
+float Population::ant_distance(Ant &a, unordered_set<int> &edge){
+    float cnt = 0;
     for(auto &v : a.tours){
         for(int i = 0; i < v.size() - 1; i++){
             if(edge.count(v[i] * n + v[i + 1])) cnt += 1.;
         }
     }
 
-    return cnt / double(n + salesmen - 1);
+    return cnt / float(n + salesmen - 1);
 }
 
 void Population::kill(){
-    vector<double> fitness(population.size());
+    vector<float> fitness(population.size());
     vector<int> index;
 
     for(int i = 0; i < population.size(); i++){
-        double mx = 0.;
+        float mx = 0.;
         index.push_back(i);
         unordered_set<int> edge;
         
@@ -29,11 +29,11 @@ void Population::kill(){
                 edge.insert(v[i] * n + v[i + 1]);
             }
         }
-        vector<double> v;
+        vector<float> v;
         for(int j = population.size() - 1; j >= 0; j--){
             v.push_back(ant_distance(population[j],edge));
         }
-        sort(v.begin(), v.end(), greater<double>());
+        sort(v.begin(), v.end(), greater<float>());
 
         fitness[i] = population[i].min_max_cost * powl(POP_ARGS, (v[0] + v[1]) / 2);
     }

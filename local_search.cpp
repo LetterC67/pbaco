@@ -28,8 +28,8 @@ void move_segment(vector<T>& vec, int l, int r, int i) {
     vec.insert(vec.begin() + i + 1, segment.begin(), segment.end());
 }
 
-double Ant::tour_length(_tour &tour){
-    double cost = 0;
+float Ant::tour_length(_tour &tour){
+    float cost = 0;
     for(int i = 0; i < tour.size() - 1; i++){
         cost += (*distance)[tour[i]][tour[i + 1]];
     }
@@ -41,8 +41,8 @@ bool Ant::swap(_tour &a, _tour &b){
 
     for(int i = 1; i < a.size() - 1; i++){
         for(int j = 1; j < b.size() - 1; j++){
-            double delta_a = -(*distance)[a[i - 1]][a[i]] - (*distance)[a[i]][a[i + 1]] + (*distance)[a[i - 1]][b[j]] + (*distance)[b[j]][a[i + 1]];
-            double delta_b = -(*distance)[b[j - 1]][b[j]] - (*distance)[b[j]][b[j + 1]] + (*distance)[b[j - 1]][a[i]] + (*distance)[a[i]][b[j + 1]]; 
+            float delta_a = -(*distance)[a[i - 1]][a[i]] - (*distance)[a[i]][a[i + 1]] + (*distance)[a[i - 1]][b[j]] + (*distance)[b[j]][a[i + 1]];
+            float delta_b = -(*distance)[b[j - 1]][b[j]] - (*distance)[b[j]][b[j + 1]] + (*distance)[b[j - 1]][a[i]] + (*distance)[a[i]][b[j + 1]]; 
             if(delta_a < 0 && delta_b < 0){
                 swapped = true;
                 std::swap(a[i], b[j]);
@@ -60,8 +60,8 @@ bool Ant::relocate(_tour &a, _tour &b){
 
     for(int i = 1; i < a.size() - 1; i++){
         for(int j = 1; j < b.size() - 1; j++){
-            double delta_decrease_a = -(*distance)[a[i - 1]][a[i]] - (*distance)[a[i]][a[i + 1]] + (*distance)[a[i - 1]][a[i + 1]];
-            double delta_increase_b = -(*distance)[b[j - 1]][b[j]] + (*distance)[b[j - 1]][a[i]] + (*distance)[a[i]][b[j]];
+            float delta_decrease_a = -(*distance)[a[i - 1]][a[i]] - (*distance)[a[i]][a[i + 1]] + (*distance)[a[i - 1]][a[i + 1]];
+            float delta_increase_b = -(*distance)[b[j - 1]][b[j]] + (*distance)[b[j - 1]][a[i]] + (*distance)[a[i]][b[j]];
 
             if(max(a.cost + delta_decrease_a, b.cost + delta_increase_b) < max(a.cost, b.cost)){
                 relocated = true;
@@ -81,7 +81,7 @@ bool Ant::relocate(_tour &a, _tour &b){
 bool Ant::swap_tail(_tour &a, _tour &b){
     bool swapped = false;
 
-    vector<double> pref_a(a.size()), suf_a(a.size()), pref_b(b.size()), suf_b(b.size());
+    vector<float> pref_a(a.size()), suf_a(a.size()), pref_b(b.size()), suf_b(b.size());
     bool ok = false;
     //cout << "here" << endl;
 
@@ -100,8 +100,8 @@ bool Ant::swap_tail(_tour &a, _tour &b){
 
     for(int i = 1; i < a.size() - 1; i++){
         for(int j = 1; j < b.size() - 1; j++){
-            double new_cost_a = pref_a[i - 1] + suf_b[j] + (*distance)[a[i - 1]][b[j]];
-            double new_cost_b = pref_b[j - 1] + suf_a[i] + (*distance)[b[j - 1]][a[i]];
+            float new_cost_a = pref_a[i - 1] + suf_b[j] + (*distance)[a[i - 1]][b[j]];
+            float new_cost_b = pref_b[j - 1] + suf_a[i] + (*distance)[b[j - 1]][a[i]];
         
             if(max(new_cost_a, new_cost_b) < max(a.cost, b.cost)){
                 a.cost = new_cost_a;
@@ -159,7 +159,7 @@ void Ant::or_opt(_tour &tour){
         for(int i = 1; i < (int)tour.size() - opt_size ; i++){
             for(int j = 0; j < (int)tour.size() - 2; j++){
                 if(i - 1 <= j && j <= i + opt_size - 1) continue;
-                double delta = (*distance)[tour[j]][tour[i]] + (*distance)[tour[i + opt_size - 1]][tour[j + 1]] + (*distance)[tour[i - 1]][tour[i + opt_size]]
+                float delta = (*distance)[tour[j]][tour[i]] + (*distance)[tour[i + opt_size - 1]][tour[j + 1]] + (*distance)[tour[i - 1]][tour[i + opt_size]]
                     - (*distance)[tour[j]][tour[j + 1]] - (*distance)[tour[i - 1]][tour[i]] - (*distance)[tour[i + opt_size - 1]][tour[i + opt_size]];
 
                 if(delta < 0){
@@ -172,7 +172,7 @@ void Ant::or_opt(_tour &tour){
 }
 
 int Ant::longest_tour_index(){
-    double cost = 0;
+    float cost = 0;
     int index = 0;
     for(int i = 0; i < tours.size(); i++){
         if(tours[i].cost > cost){
@@ -184,7 +184,7 @@ int Ant::longest_tour_index(){
 }
 
 int Ant::shortest_tour_index(){
-    double cost = 1e18;
+    float cost = 1e18;
     int index = 0;
     for(int i = 0; i < tours.size(); i++){
         if(tours[i].cost < cost){
@@ -198,7 +198,6 @@ int Ant::shortest_tour_index(){
 
 void Ant::intra_tour_optimization(){
     for(auto &tour : tours){
-        assert(abs(tour_length(tour) - tour.cost) < 1e-6);
         two_opt(tour);
         or_opt(tour);
     }
@@ -225,13 +224,6 @@ void Ant::inter_tour_optimization_del(){
     }
     
     
-    for(int i = 0; i < can.size(); i++){
-        for(int j = 0; j < can.size(); j++){
-            if(i != j)
-                loop |= swap_tail(tours[can[i]], tours[can[j]]);
-        }
-    }
-
     for(int i = 0; i < can.size(); i++){
         for(int j = 0; j < can.size(); j++){
             if(i != j)
@@ -273,19 +265,17 @@ void Ant::inter_tour_optimization(){
         if(tour != i)
             loop |= swap_tail(tours[ord[i]], tours[ord[tour]]); 
     }
+
 }
 
 
 void Ant::local_search(){
-    // for(int i = 0; i < 3; i++)
-    for(int j = 0; j < INTER_TOUR_INTERATIONS; j++)
-        inter_tour_optimization_del();
+    inter_tour_optimization_del();
     intra_tour_optimization();
 
     for(int i = 0; i < LOCAL_SEARCH_ITERATIONS; i++){
-        // inter_tour_optimization_del();
         for(int j = 0; j < INTER_TOUR_INTERATIONS; j++)
-        inter_tour_optimization();
+            inter_tour_optimization();
         intra_tour_optimization();
     }
 }

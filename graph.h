@@ -7,11 +7,11 @@ using namespace std;
 struct Graph{
     int n;
     string EDGE_WEIGHT_TYPE, NAME;
-    vector<vector<double>> distance;
-    vector<double> x;
-    vector<double> y;
+    vector<vector<float>> distance;
+    vector<float> x;
+    vector<float> y;
 
-    double calculate_distance(int i, int j);
+    float calculate_distance(int i, int j);
     void load_data(const string &file);
 };
 

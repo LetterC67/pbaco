@@ -7,7 +7,7 @@ using namespace std;
 
 struct _tour{
     vector<int> tour;
-    double cost;
+    float cost;
 
     _tour(){
         cost = 0.;
@@ -44,12 +44,12 @@ struct _tour{
 };
 
 struct Ant{      
-    vector<vector<double>> *distance;
+    vector<vector<float>> *distance;
     vector<_tour> tours;
     unordered_set<int> del;
-    double min_max_cost;
-    double min_sum_cost;
-    double sqrt_cost;
+    float min_max_cost;
+    float min_sum_cost;
+    float sqrt_cost;
 
     Ant(){
         min_max_cost = 1e9;
@@ -57,15 +57,15 @@ struct Ant{
     }
 
 
-    Ant(int salesmen, vector<vector<double>> *distance): distance(distance){
+    Ant(int salesmen, vector<vector<float>> *distance): distance(distance){
         tours = vector<_tour>(salesmen);
         for(int i = 0; i < salesmen; i++) del.insert(i);
     }
     
     int longest_tour_index();
     int shortest_tour_index();
-    double tour_length(_tour &tour);
-    double tour_distance(_tour &a, _tour &b);
+    float tour_length(_tour &tour);
+    float tour_distance(_tour &a, _tour &b);
 
     void add(int salesman, int vertex);
     void add(_tour &tour, int vertex);

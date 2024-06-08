@@ -15,7 +15,7 @@ inline double powl(double x, int y){
     return res;
 }
 
-// pair<int, int> mTSPSolver::select_city(Ant &ant, vector<bool> &visited, vector<long double> &sum, vector<vector<pair<int, long double>>> &bucket){
+// pair<int, int> mTSPSolver::select_city(Ant &ant, vector<bool> &visited, vector<float> &sum, vector<vector<pair<int, float>>> &bucket){
 //     RouletteWheel wheel;
 
 //     for(int salesman = 0; salesman < salesmen; salesman++){
@@ -24,7 +24,7 @@ inline double powl(double x, int y){
 //             int current_city = ant.tours[salesman].back();
 //             for(int city = 0; city < n; city++){
 //                 if(!visited[city]){
-//                     long double prob = pheromone[current_city][city] * 1. / powl(graph.distance[current_city][city] * max(1., ant.tours[salesman].cost), BETA);
+//                     float prob = pheromone[current_city][city] * 1. / powl(graph.distance[current_city][city] * max(1., ant.tours[salesman].cost), BETA);
 //                     //cout << pheromone[current_city][city] << endl;
 //                     bucket[salesman].push_back({city, prob});
 //                     sum[salesman] += prob;
@@ -36,8 +36,8 @@ inline double powl(double x, int y){
 //     }
 
 //     int sm = wheel.spin();
-//     long double bound = rng_real(rng) * sum[sm];
-//     long double accum = 0.;
+//     float bound = rng_real(rng) * sum[sm];
+//     float accum = 0.;
 
 //     for(auto &p : bucket[sm]){
 //         if(visited[p.first]) continue;
@@ -46,7 +46,7 @@ inline double powl(double x, int y){
 //             int city = p.first;
 //             for(int salesman = 0; salesman < salesmen; salesman++){
 //                 int current_city = ant.tours[salesman].back();
-//                 long double prob = pheromone[current_city][city] * 1. / powl(graph.distance[current_city][city] * max(1., ant.tours[salesman].cost), BETA);
+//                 float prob = pheromone[current_city][city] * 1. / powl(graph.distance[current_city][city] * max(1., ant.tours[salesman].cost), BETA);
 //                 sum[salesman] -= prob;
 //             }
 //             bucket[sm].clear();
@@ -59,10 +59,10 @@ inline double powl(double x, int y){
 
 
 
-pair<int, int> mTSPSolver::select_city(Ant &ant, vector<bool> &visited, vector<long double> &sum, vector<vector<pair<int, long double>>> &bucket){
+pair<int, int> mTSPSolver::select_city(Ant &ant, vector<bool> &visited, vector<float> &sum, vector<vector<pair<int, float>>> &bucket){
     RouletteWheel wheel;
     int salesman = ant.shortest_tour_index();
-    // double cost = 1e9;
+    // float cost = 1e9;
 
     // for(int i = 0; i < salesmen; i++){
     //     if(ant.del.count(i) && ant.tours[i].cost < cost){
@@ -76,7 +76,7 @@ pair<int, int> mTSPSolver::select_city(Ant &ant, vector<bool> &visited, vector<l
     vector<int> candidate;
     for(int city = 0; city < n; city++){
         if(!visited[city]){
-            long double prob = pheromone[current_city][city] * 1. / powl(graph.distance[current_city][city], BETA);
+            double prob = pheromone[current_city][city] * 1. / powl(graph.distance[current_city][city], BETA);
             wheel.add(prob);
             candidate.push_back(city);
         }
@@ -89,8 +89,8 @@ pair<int, int> mTSPSolver::select_city(Ant &ant, vector<bool> &visited, vector<l
 
 Ant mTSPSolver::build_solution(Ant ant){
     vector<bool> visited(n);
-    vector<long double> sum(salesmen);
-    vector<vector<pair<int, long double>>> bucket(salesmen);
+    vector<float> sum(salesmen);
+    vector<vector<pair<int, float>>> bucket(salesmen);
 
     
 
@@ -202,7 +202,7 @@ void mTSPSolver::solve(){
         }
 
             auto end = chrono::high_resolution_clock::now();
-            double time_taken = 
+            float time_taken = 
       chrono::duration_cast<chrono::nanoseconds>(end - start).count();
  
     time_taken *= 1e-9;

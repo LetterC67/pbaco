@@ -16,7 +16,7 @@ struct mTSPSolver{
     int salesmen;
     int iteration = 1;
     int no_improve = 0;
-    double TAU_MIN;
+    float TAU_MIN;
 
     Ant gbest;
     Population population;
@@ -25,7 +25,7 @@ struct mTSPSolver{
 
     mTSPSolver(Graph graph, int salesmen): graph(graph), salesmen(salesmen){
         n = graph.n;
-        TAU_MIN = 1 / (double(n * n) / RATIO);
+        TAU_MIN = 1 / (float(n * n) / RATIO);
         pheromone.resize(n);
         for(auto &p : pheromone)
             p = vector<double>(n, TAU_MAX);
@@ -36,7 +36,7 @@ struct mTSPSolver{
     void update_pheromone();
     vector<Ant> build_solutions();
     Ant build_solution(Ant ant);
-    pair<int, int> select_city(Ant &ant, vector<bool> &visited, vector<long double> &sum, vector<vector<pair<int, long double>>> &bucket);
+    pair<int, int> select_city(Ant &ant, vector<bool> &visited, vector<float> &sum, vector<vector<pair<int, float>>> &bucket);
 };
 
 #endif

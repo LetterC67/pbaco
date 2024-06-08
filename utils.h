@@ -6,12 +6,12 @@
 using namespace std;
 
 struct RouletteWheel{
-    vector<long double> probabilities;
-    long double sum = 0;
-    long double mx = 0;
+    vector<double> probabilities;
+    double sum = 0;
+    double mx = 0;
     int pos = -1;
 
-    void add(long double probability);
+    void add(double probability);
     int spin();
 };
 

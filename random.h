@@ -5,7 +5,7 @@
 using namespace std;
 
 extern mt19937 rng;
-extern uniform_real_distribution<double> rng_real;
+extern uniform_real_distribution<float> rng_real;
 
 int rand_range(int l, int r);
 
