@@ -36,7 +36,7 @@ struct mTSPSolver{
     void update_pheromone();
     vector<Ant> build_solutions();
     Ant build_solution(Ant ant);
-    pair<int, int> select_city(Ant &ant, vector<bool> &visited, vector<float> &sum, vector<vector<pair<int, float>>> &bucket);
+    pair<int, int> select_city(Ant &ant, vector<bool> &visited);
 };
 
 #endif

@@ -36,15 +36,19 @@ float Ant::tour_length(_tour &tour){
     return cost;
 }
 
-bool Ant::swap(_tour &a, _tour &b){
+bool Ant::swap(_tour &a, _tour &b, int idx_b){
     bool swapped = false;
 
     for(int i = 1; i < a.size() - 1; i++){
-        for(int j = 1; j < b.size() - 1; j++){
+        for(int &u : (*graph).closest[a[i]]){
+            if(assigned[u] != idx_b) continue;
+            int j = position[u];
             float delta_a = -(*distance)[a[i - 1]][a[i]] - (*distance)[a[i]][a[i + 1]] + (*distance)[a[i - 1]][b[j]] + (*distance)[b[j]][a[i + 1]];
             float delta_b = -(*distance)[b[j - 1]][b[j]] - (*distance)[b[j]][b[j + 1]] + (*distance)[b[j - 1]][a[i]] + (*distance)[a[i]][b[j + 1]]; 
             if(delta_a < 0 && delta_b < 0){
                 swapped = true;
+                std::swap(assigned[a[i]], assigned[b[j]]);
+                std::swap(position[a[i]], position[b[j]]);
                 std::swap(a[i], b[j]);
                 a.cost += delta_a;
                 b.cost += delta_b;
@@ -55,11 +59,15 @@ bool Ant::swap(_tour &a, _tour &b){
     return swapped;
 }
 
-bool Ant::relocate(_tour &a, _tour &b){
+bool Ant::relocate(_tour &a, _tour &b, int idx_a, int idx_b){
+    if(a.cost < b.cost ) return false;
+
     bool relocated = false;
 
     for(int i = 1; i < a.size() - 1; i++){
-        for(int j = 1; j < b.size() - 1; j++){
+        for(int &u : (*graph).closest[a[i]]){
+            if(assigned[u] != idx_b) continue;
+            int j = position[u];
             float delta_decrease_a = -(*distance)[a[i - 1]][a[i]] - (*distance)[a[i]][a[i + 1]] + (*distance)[a[i - 1]][a[i + 1]];
             float delta_increase_b = -(*distance)[b[j - 1]][b[j]] + (*distance)[b[j - 1]][a[i]] + (*distance)[a[i]][b[j]];
 
@@ -70,6 +78,10 @@ bool Ant::relocate(_tour &a, _tour &b){
             
                 b.tour.insert(b.begin() + j, a[i]);
                 a.tour.erase(a.begin() + i);
+
+                retag(idx_a);
+                retag(idx_b);
+                
                 break;
             }
         }
@@ -78,7 +90,7 @@ bool Ant::relocate(_tour &a, _tour &b){
     return relocated;
 }
 
-bool Ant::swap_tail(_tour &a, _tour &b){
+bool Ant::swap_tail(_tour &a, _tour &b, int idx_a, int idx_b){
     bool swapped = false;
 
     vector<float> pref_a(a.size()), suf_a(a.size()), pref_b(b.size()), suf_b(b.size());
@@ -99,7 +111,9 @@ bool Ant::swap_tail(_tour &a, _tour &b){
     }
 
     for(int i = 1; i < a.size() - 1; i++){
-        for(int j = 1; j < b.size() - 1; j++){
+        for(int &u : (*graph).closest[a[i]]){
+            if(assigned[u] != idx_b) continue;
+            int j = position[u];
             float new_cost_a = pref_a[i - 1] + suf_b[j] + (*distance)[a[i - 1]][b[j]];
             float new_cost_b = pref_b[j - 1] + suf_a[i] + (*distance)[b[j - 1]][a[i]];
         
@@ -113,6 +127,9 @@ bool Ant::swap_tail(_tour &a, _tour &b){
 
                 for(int k = i; k < c.size(); k++) b.push_back(c[k]);
                 for(int k = j; k < d.size(); k++) a.push_back(d[k]);
+
+                retag(idx_a);
+                retag(idx_b);
 
                 return true;
             }
@@ -135,6 +152,9 @@ bool Ant::swap_tail(_tour &a, _tour &b){
                 reverse(c.begin(), c.end());
                 b.tour = c;
                 b.tour.insert(b.end(), d.begin(), d.end());
+
+                retag(idx_a);
+                retag(idx_b);
 
                 return true;
             }
@@ -201,6 +221,8 @@ void Ant::intra_tour_optimization(){
         two_opt(tour);
         or_opt(tour);
     }
+    for(int i = 0; i < tours.size(); i++)
+        retag(i);
 }
 
 void Ant::inter_tour_optimization_del(){
@@ -212,14 +234,14 @@ void Ant::inter_tour_optimization_del(){
     for(int i = 0; i < can.size(); i++){
         for(int j = 0; j < can.size(); j++){
             if(i != j)
-                loop |= swap(tours[can[i]], tours[can[j]]);
+                loop |= swap(tours[can[i]], tours[can[j]], can[j]);
         }
     }
 
     for(int i = 0; i < can.size(); i++){
         for(int j = 0; j < can.size(); j++){
             if(i != j)
-                loop |= relocate(tours[can[i]], tours[can[j]]);
+                loop |= relocate(tours[can[i]], tours[can[j]], can[i], can[j]);
         }
     }
     
@@ -227,7 +249,7 @@ void Ant::inter_tour_optimization_del(){
     for(int i = 0; i < can.size(); i++){
         for(int j = 0; j < can.size(); j++){
             if(i != j)
-                loop |= swap_tail(tours[can[i]], tours[can[j]]);
+                loop |= swap_tail(tours[can[i]], tours[can[j]], can[i], can[j]);
         }
     }
 }
@@ -241,38 +263,33 @@ void Ant::inter_tour_optimization(){
     shuffle(ord.begin(), ord.end(), rng);
     
     bool loop = false;
-
     for(int i = 0; i < tours.size(); i++){
         for(int tour = 0; tour < tours.size(); tour++)
         if(tour != i)
-            loop |= swap(tours[ord[i]], tours[ord[tour]]);   
+            loop |= swap(tours[ord[i]], tours[ord[tour]], ord[tour]);   
     }
 
     for(int i = 0; i < tours.size(); i++){
         for(int tour = 0; tour < tours.size(); tour++)
         if(tour != i)
-            loop |= relocate(tours[ord[i]], tours[ord[tour]]); 
+            loop |= relocate(tours[ord[i]], tours[ord[tour]], ord[i], ord[tour]); 
     }
-
     for(int i = 0; i < tours.size(); i++){
         for(int tour = 0; tour < tours.size(); tour++)
         if(tour != i)
-            loop |= swap_tail(tours[ord[i]], tours[ord[tour]]); 
+            loop |= swap_tail(tours[ord[i]], tours[ord[tour]], ord[i], ord[tour]); 
     }
-
     for(int i = 0; i < tours.size(); i++){
         for(int tour = 0; tour < tours.size(); tour++)
         if(tour != i)
-            loop |= swap_tail(tours[ord[i]], tours[ord[tour]]); 
+            loop |= swap_tail(tours[ord[i]], tours[ord[tour]], ord[i], ord[tour]); 
     }
-
 }
 
 
 void Ant::local_search(){
     inter_tour_optimization_del();
     intra_tour_optimization();
-
     for(int i = 0; i < LOCAL_SEARCH_ITERATIONS; i++){
         for(int j = 0; j < INTER_TOUR_INTERATIONS; j++)
             inter_tour_optimization();

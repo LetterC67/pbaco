@@ -3,6 +3,7 @@
 
 #include <bits/stdc++.h>
 #include "parameters.h"
+#include "graph.h"
 using namespace std;
 
 struct _tour{
@@ -45,7 +46,9 @@ struct _tour{
 
 struct Ant{      
     vector<vector<float>> *distance;
+    Graph *graph;
     vector<_tour> tours;
+    vector<int> assigned, position;
     unordered_set<int> del;
     float min_max_cost;
     float min_sum_cost;
@@ -57,11 +60,14 @@ struct Ant{
     }
 
 
-    Ant(int salesmen, vector<vector<float>> *distance): distance(distance){
+    Ant(int salesmen, vector<vector<float>> *distance, Graph *graph): graph(graph), distance(distance){
         tours = vector<_tour>(salesmen);
         for(int i = 0; i < salesmen; i++) del.insert(i);
+        assigned = vector<int>(graph -> n);
+        position = vector<int>(graph -> n);
     }
     
+    void retag(int index);
     int longest_tour_index();
     int shortest_tour_index();
     float tour_length(_tour &tour);
@@ -70,13 +76,14 @@ struct Ant{
     void add(int salesman, int vertex);
     void add(_tour &tour, int vertex);
     
-    bool swap(_tour &a, _tour &b);
-    bool relocate(_tour &a, _tour &b);
-    bool swap_tail(_tour &a, _tour &b);
+    bool swap(_tour &a, _tour &b, int idx_b);
+    bool relocate(_tour &a, _tour &b, int idx_a, int idx_b);
+    bool swap_tail(_tour &a, _tour &b, int idx_a, int idx_b);
 
     void two_opt(_tour &tour);
     void or_opt(_tour &tour);
     void run_dp(_tour &x, _tour &y);
+    void run_tsp();
     void dp();
 
     void intra_tour_optimization();

@@ -1,11 +1,21 @@
 #include <bits/stdc++.h>
 #include "ant.h"
 #include "random.h"
+#include "ga_tsp/run_tsp.h"
 
 using namespace std;
 
+void Ant::retag(int index){
+    for(int i = 1; i < tours[index].size() - 1; i++){
+        assigned[tours[index][i]] = index;
+        position[tours[index][i]] = i;
+    }
+}
+
 void Ant::add(int salesman, int vertex){
     tours[salesman].cost += (*distance)[tours[salesman].back()][vertex];
+    assigned[vertex] = salesman;
+    position[vertex] = tours[salesman].size();
     tours[salesman].push_back(vertex);
 }
 
@@ -42,6 +52,46 @@ float Ant::tour_distance(_tour& a, _tour &b){
         }
     }
     return x / float(a.size() - 2) / float(b.size() - 2);
+}
+
+void Ant::run_tsp(){
+    for(auto &tour : tours){
+        vector<vector<double>> _distance(tour.size() - 1, vector<double>(tour.size() - 1));
+
+        for(int i = 0; i < tour.size() - 1; i++){
+            for(int j = 0; j < tour.size() - 1; j++){
+                _distance[i][j] = _distance[j][i] = (*distance)[tour[i]][tour[j]];
+            }
+        }
+
+        auto result = run(tour.size() - 1, _distance);
+
+        cout << "Old vs. new: " << tour.cost << ' ' << result.first << endl;
+        if(result.first < tour.cost){
+            tour.cost = result.first;
+            auto _tour = result.second;
+            while(_tour.front()){
+                _tour.push_back(_tour.front());
+                _tour.erase(_tour.begin());
+            }
+
+            vector<int> temp;
+            for(int i = 0; i < tour.size() - 1; i++){
+                temp.push_back(tour[_tour[i]]);
+            }   
+        
+            temp.push_back(0);
+
+            tour.tour = temp;
+        }
+    }
+
+    for(int i = 0; i < tours.size(); i++){
+        retag(i);
+        cout << "New cost " << i << ' ' << tours[i].cost << endl;
+    }
+
+    calculate_result();
 }
 
 Ant trim(Ant ant){
