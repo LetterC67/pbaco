@@ -72,7 +72,7 @@ Ant mTSPSolver::build_solution(Ant ant){
 
 vector<Ant> mTSPSolver::build_solutions(){
     vector<Ant> ants;
-    const int ANTS = max(MIN_ANT, (int)(ANTS_MULTIPLIER * n));
+    //const int ANTS = max(MIN_ANT, (int)(ANTS_MULTIPLIER * n));
 
     #pragma omp parallel for
     for(int ant = 0; ant < ANTS; ant++){

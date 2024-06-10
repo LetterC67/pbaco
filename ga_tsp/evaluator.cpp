@@ -191,7 +191,8 @@ pair<double, vector<int>> TEvaluator::returnBestSolution(TIndi& indi){
 	}
 	if( this->checkValid( Array, indi.fEvaluationValue ) == false )
 		printf( "Individual is invalid \n" );
-	
+	else
+		printf(" Individual is valid \n");
 	vector<int> res;
 	for( int i = 0; i < indi.fN; ++i )
 		res.push_back(Array[i] - 1);
