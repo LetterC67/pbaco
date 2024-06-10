@@ -146,19 +146,20 @@ float Graph::calculate_distance(int i, int j) {
 }
 
 void Graph::init_closest(){
-    // for(int i = 0; i < n; i++){
-    //     for(int j = 0; j < n; j++){
-    //         if(i != j && j != DEPOT) closest[i].push_back(j);
-    //     }
-    //     sort(closest[i].begin(), closest[i].end(), [&](const int &a, const int &b){
-    //         return distance[i][a] < distance[i][b];
-    //     });
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++){
+            if(i != j && j != DEPOT) closest[i].push_back(j);
+        }
+        sort(closest[i].begin(), closest[i].end(), [&](const int &a, const int &b){
+            return distance[i][a] < distance[i][b];
+        });
 
-    //     while(closest[i].size() > n * CLOSEST_RATE) closest[i].pop_back();
-    // }
+        while(closest[i].size() > n * CLOSEST_RATE) closest[i].pop_back();
+        s_closest[i] = unordered_set<int>(closest[i].begin(), closest[i].end());
+    }
 
-    OneMinimumSpanningTree one_tree(0, n, CLOSEST_RATE, distance);
-    closest = one_tree.computeCandidateSet();
+    // OneMinimumSpanningTree one_tree(0, n, CLOSEST_RATE, distance);
+    // closest = one_tree.computeCandidateSet();
 }
 
 void Graph::load_data(const string &file){
@@ -186,6 +187,7 @@ void Graph::load_data(const string &file){
     ifs >> nil;
 
     closest = vector<vector<int>>(n);
+    s_closest = vector<unordered_set<int>>(n);
 
     x.resize(n);
     y.resize(n);

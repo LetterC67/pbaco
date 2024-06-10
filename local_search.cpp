@@ -177,6 +177,7 @@ void Ant::two_opt(_tour &tour){
 void Ant::or_opt(_tour &tour){
     for(int opt_size = 1; opt_size <= OPT_SIZE; opt_size++){
         for(int i = 1; i < (int)tour.size() - opt_size ; i++){
+            //if(!(*graph).s_closest[tour[i - 1]].count(tour[i + opt_size])) continue;
             for(int j = 0; j < (int)tour.size() - 2; j++){
                 if(i - 1 <= j && j <= i + opt_size - 1) continue;
                 float delta = (*distance)[tour[j]][tour[i]] + (*distance)[tour[i + opt_size - 1]][tour[j + 1]] + (*distance)[tour[i - 1]][tour[i + opt_size]]

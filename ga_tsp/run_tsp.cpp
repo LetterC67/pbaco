@@ -20,12 +20,14 @@ pair<double, vector<int>> run(int N, vector<vector<double>> &distances){
 	gEnv->Npop = 100; // number of items
 	gEnv->Nch = 30; // number of offsprings
 
-	cout << "Initializing ..." << endl;
+	//cout << "Initializing ..." << endl;
 	gEnv->define(N, distances);
-	cout << "Building solution ..." << endl;
+	///cout << "Building solution ..." << endl;
 	for (int n = 0; n < maxNumOfTrial; ++n){ 
 		gEnv->doIt(); 
 		gEnv->printOn(n);
 	}
-    return gEnv->bestSolution();
+	auto result = gEnv -> bestSolution();
+	delete gEnv;
+    return result;
 }

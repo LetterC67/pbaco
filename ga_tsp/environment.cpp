@@ -47,10 +47,12 @@ void TEnvironment::def(){
 
 	tCross = new TCross( N );
 	tCross->eval = fEvaluator;
+	tCross->eval->fNearNumMax = min(N, 50);
 	tCross->Npop = Npop;
 
 	tKopt = new TKopt( N );
 	tKopt->eval = fEvaluator;
+	tKopt->eval->fNearNumMax = min(N, 50);
 	tKopt->setInvNearList();
 
 	fEdgeFreq.clear();
@@ -69,7 +71,7 @@ void TEnvironment::doIt(){
 	this->getEdgeFreq();
 	while( 1 ){
 		this->setAverageBest();
-		printf( "%d:\t%f\t%lf\n", fCurNumOfGen, fBestValue, fAverageValue );
+		//printf( "%d:\t%f\t%lf\n", fCurNumOfGen, fBestValue, fAverageValue );
 		if( this->terminationCondition() ) break;
 
 		this->selectForMating();
@@ -175,9 +177,9 @@ void TEnvironment::getEdgeFreq(){
 }
 
 void TEnvironment::printOn( int n ){
-	printf( "n = %d val = %f Gen = %d Time = %f %f\n" , n, tBest.fEvaluationValue, fCurNumOfGen,
-		((double)(this->fTimeInit - this->fTimeStart)/(double)CLOCKS_PER_SEC),
-		((double)(this->fTimeEnd - this->fTimeStart)/(double)CLOCKS_PER_SEC) );
+	//printf( "n = %d val = %f Gen = %d Time = %f %f\n" , n, tBest.fEvaluationValue, fCurNumOfGen,
+	//	((double)(this->fTimeInit - this->fTimeStart)/(double)CLOCKS_PER_SEC),
+	//	((double)(this->fTimeEnd - this->fTimeStart)/(double)CLOCKS_PER_SEC) );
 	fflush(stdout);
 
 }

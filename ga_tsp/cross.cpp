@@ -378,7 +378,7 @@ void TCross::setABcycle( const TIndi& tPa1, const TIndi& tPa2, int flagC[ 10 ], 
 	}
 RETURN:
 	if( fNumOfABcycle == fMaxNumOfABcycle ){
-		printf( "fMaxNumOfABcycle(%d) must be increased\n", fMaxNumOfABcycle );
+		//printf( "fMaxNumOfABcycle(%d) must be increased\n", fMaxNumOfABcycle );
 		exit( 1 );
 	}
 }
@@ -566,10 +566,10 @@ void TCross::makeCompleteSol( TIndi& tKid ){
 		}
 
 		if( a1 == -1 && nearMax == 10 ){
-			nearMax = 50;
+			nearMax = eval->fNearNumMax;
 			goto RESTART;
 		}
-		else if( a1 == -1 && nearMax == 50  ){
+		else if( a1 == -1 && nearMax == eval->fNearNumMax  ){
 			int r = rand() % ( fNumOfElementInCU - 1 );
 			a = fListOfCenterUnit[ r ];
 			b = fListOfCenterUnit[ r+1 ];

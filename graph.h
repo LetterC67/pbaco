@@ -9,6 +9,7 @@ struct Graph{
     string EDGE_WEIGHT_TYPE, NAME;
     vector<vector<float>> distance;
     vector<vector<int>> closest;
+    vector<unordered_set<int>> s_closest;
     vector<float> x;
     vector<float> y;
 

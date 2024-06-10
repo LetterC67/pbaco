@@ -118,6 +118,7 @@ void mTSPSolver::solve(){
         for(auto &ant : ants){
             population.add(ant);
             if(gbest.min_max_cost - 1e-4 > ant.min_max_cost || (abs(gbest.min_max_cost - ant.min_max_cost) < 1e-4 && gbest.sqrt_cost - 1e-4 > ant.sqrt_cost)){
+                ant.run_tsp();
                 gbest = ant;
                 no_improve = 0;
             }
@@ -133,8 +134,7 @@ void mTSPSolver::solve(){
             
         population.kill();
         if(no_improve > MAX_STAGNATION){
-            gbest.run_tsp();
-            no_improve = 0;
+            
         }
 
         add(iteration - 1, gbest.min_max_cost);

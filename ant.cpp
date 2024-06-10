@@ -56,6 +56,8 @@ float Ant::tour_distance(_tour& a, _tour &b){
 
 void Ant::run_tsp(){
     for(auto &tour : tours){
+        if(tour.size() <= 51) continue;
+
         vector<vector<double>> _distance(tour.size() - 1, vector<double>(tour.size() - 1));
 
         for(int i = 0; i < tour.size() - 1; i++){
