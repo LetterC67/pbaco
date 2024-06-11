@@ -154,7 +154,7 @@ void Graph::init_closest(){
             return distance[i][a] < distance[i][b];
         });
 
-        while(closest[i].size() > n * CLOSEST_RATE) closest[i].pop_back();
+        while(closest[i].size() > max(MIN_CLOSEST_COUNT, int(n * CLOSEST_RATE))) closest[i].pop_back();
         s_closest[i] = unordered_set<int>(closest[i].begin(), closest[i].end());
     }
 

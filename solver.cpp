@@ -18,15 +18,6 @@ inline double powl(double x, int y){
 pair<int, int> mTSPSolver::select_city(Ant &ant, vector<bool> &visited){
     RouletteWheel wheel;
     int salesman = ant.shortest_tour_index();
-    // float cost = 1e9;
-
-    // for(int i = 0; i < salesmen; i++){
-    //     if(ant.del.count(i) && ant.tours[i].cost < cost){
-    //         cost = ant.tours[i].cost;
-    //         salesman = i;
-    //     }
-    // }
-
     int current_city = ant.tours[salesman].back();
 
     vector<int> candidate;
@@ -56,10 +47,8 @@ Ant mTSPSolver::build_solution(Ant ant){
     int not_visited = count(visited.begin(), visited.end(), 0);
 
     while(not_visited--){
-        //cout << not_visited << endl;
         auto next = select_city(ant, visited);
         ant.add(next.first, next.second);
-       // cout << next.first << ' ' << next.second << endl;
         visited[next.second] = true;
     }
 
@@ -101,14 +90,16 @@ void mTSPSolver::update_pheromone(){
     for(auto &tour : gbest.tours){
         for(int i = 0; i < tour.size() - 1; i++){
             pheromone[tour[i]][tour[i + 1]] = pheromone[tour[i]][tour[i + 1]] * (1 - RHO) - TAU_MIN * RHO + TAU_MAX * RHO;
-            ///assert(pheromone[tour[i]][tour[i + 1]]  <= 1);
         }
     }
 }
 
 void mTSPSolver::solve(){
-    for(; iteration <= ITERATIONS; iteration++){
-        auto start = chrono::high_resolution_clock::now();
+    auto start_time = chrono::high_resolution_clock::now();
+
+    
+    for(; iteration <= cutoff_iteration; iteration++){
+        auto start_iteration = chrono::high_resolution_clock::now();
 
 
         auto ants = build_solutions();
@@ -123,7 +114,7 @@ void mTSPSolver::solve(){
                 no_improve = 0;
             }
 
-            if(ibest.min_max_cost - 1e-6 > ant.min_max_cost || (abs(ibest.min_max_cost - ant.min_max_cost) < 1e-6 && ibest.sqrt_cost - 1e-6 > ant.sqrt_cost)){
+            if(ibest.min_max_cost - 1e-4 > ant.min_max_cost || (abs(ibest.min_max_cost - ant.min_max_cost) < 1e-4 && ibest.sqrt_cost - 1e-4 > ant.sqrt_cost)){
                 ibest = ant;
             }
         }
@@ -131,7 +122,6 @@ void mTSPSolver::solve(){
 
         update_pheromone();
 
-            
         population.kill();
         if(no_improve > MAX_STAGNATION){
             
@@ -139,27 +129,30 @@ void mTSPSolver::solve(){
 
         add(iteration - 1, gbest.min_max_cost);
 
-        if(iteration % 10 == 0){
-            for(auto &tour : gbest.tours){
-                for(int &d : tour){
-                    cout << d << ' ';
-                }
-                cout << endl;
-            }
+        // if(iteration % 10 == 0){
+        //     for(auto &tour : gbest.tours){
+        //         for(int &d : tour){
+        //             cout << d << ' ';
+        //         }
+        //         cout << endl;
+        //     }
 
-            for(auto &p : population.population){
-                cout << p.min_max_cost << endl;
-            }
+        //     for(auto &p : population.population){
+        //         cout << p.min_max_cost << endl;
+        //     }
+        // }
 
-            //population.population = {gbest};
-        }
+        auto end_itertation = chrono::high_resolution_clock::now();
+        float iteration_time = chrono::duration_cast<chrono::nanoseconds>(end_itertation - start_iteration).count();
+        iteration_time *= 1e-9;
 
-            auto end = chrono::high_resolution_clock::now();
-            float time_taken = 
-      chrono::duration_cast<chrono::nanoseconds>(end - start).count();
- 
-    time_taken *= 1e-9;
+        cout << "Iteration " << iteration << ' ' << gbest.min_max_cost << ' ' << ibest.min_max_cost << ' ' << no_improve << ' ' << iteration_time << endl;
 
-        cout << "Iteration " << iteration << ' ' << gbest.min_max_cost << ' ' << ibest.min_max_cost << ' ' << gbest.min_sum_cost << ' ' << no_improve << ' ' << time_taken << endl;
+        float program_time = chrono::duration_cast<chrono::nanoseconds>(end_itertation - start_time).count();
+        program_time *= 1e-9;
+
+        if(cutoff_time != -1 && program_time > cutoff_time) break;
     }
+
+    cout << "Result: " << gbest.min_max_cost << endl;
 }

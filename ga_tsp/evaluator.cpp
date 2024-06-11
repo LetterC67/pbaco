@@ -99,7 +99,7 @@ void TEvaluator::setInstance(const string& filename) {
 	}
 
 	if( strcmp( type, "EUC_2D" ) == 0  ) {
-		std::cout << fEdgeDis.size() << " " << fEdgeDis[0].size() << std::endl;
+		//std::cout << fEdgeDis.size() << " " << fEdgeDis[0].size() << std::endl;
 		for( int i = 0; i < Ncity ; ++i )
 			for( int j = 0; j < Ncity ; ++j ){
 				fEdgeDis[ i ][ j ]= sqrt((x[i]-x[j])*(x[i]-x[j])+(y[i]-y[j])*(y[i]-y[j]));
@@ -189,10 +189,10 @@ pair<double, vector<int>> TEvaluator::returnBestSolution(TIndi& indi){
 		curr = next;
 		if( curr == st ) break;
 	}
-	if( this->checkValid( Array, indi.fEvaluationValue ) == false )
-		printf( "Individual is invalid \n" );
-	else
-		printf(" Individual is valid \n");
+	// if( this->checkValid( Array, indi.fEvaluationValue ) == false )
+	// 	printf( "Individual is invalid \n" );
+	// else
+	// 	printf(" Individual is valid \n");
 	vector<int> res;
 	for( int i = 0; i < indi.fN; ++i )
 		res.push_back(Array[i] - 1);
@@ -213,7 +213,7 @@ bool TEvaluator::checkValid(vector<int>& array, double value) {
 		distance += fEdgeDis[ array[ i ]-1 ][ array[ i+1 ]-1 ];
 
 	distance += fEdgeDis[ array[ Ncity-1 ]-1 ][ array[ 0 ]-1 ];
-	printf( "Distance: %f, Value: %f\n", distance, value);
+	//printf( "Distance: %f, Value: %f\n", distance, value);
 	delete [] check;
 	if( abs(distance - value) > 1e-3 ) return false;
 	return true;

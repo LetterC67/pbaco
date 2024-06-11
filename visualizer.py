@@ -33,7 +33,7 @@ def read(file_path):
 
 # Create the plot
 plt.figure(figsize=(10, 6))
-datasets = [ 'convergence/pcb1173_10_original', 'convergence/pcb1173_10_']
+datasets = [ 'convergence/pcb1173_10_35_pop1.2', 'convergence/pcb1173_10_ant35']
 
 # Generate and plot each dataset
 for dataset in datasets:

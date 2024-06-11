@@ -18,12 +18,14 @@ struct mTSPSolver{
     int no_improve = 0;
     float TAU_MIN;
 
+    int cutoff_time, cutoff_iteration;
+
     Ant gbest;
     Population population;
     vector<vector<double>> pheromone;
 
 
-    mTSPSolver(Graph graph, int salesmen): graph(graph), salesmen(salesmen){
+    mTSPSolver(Graph graph, int salesmen, int cutoff_time, int cutoff_iteration): graph(graph), salesmen(salesmen), cutoff_iteration(cutoff_iteration), cutoff_time(cutoff_time){
         n = graph.n;
         TAU_MIN = 1 / (float(n * n) / RATIO);
         pheromone.resize(n);

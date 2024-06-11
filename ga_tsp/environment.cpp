@@ -162,7 +162,7 @@ void TEnvironment::generateKids( int s ){
 
 void TEnvironment::getEdgeFreq(){
 	int  k0, k1, N = fEvaluator->Ncity;
-	std::cout << fEdgeFreq.size() << " " << fEdgeFreq[0].size() << std::endl;
+	//std::cout << fEdgeFreq.size() << " " << fEdgeFreq[0].size() << std::endl;
 	for( int j1 = 0; j1 < N; ++j1 )
 		for( int j2 = 0; j2 < N; ++j2 )
 			fEdgeFreq[ j1 ][ j2 ] = 0;

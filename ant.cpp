@@ -68,7 +68,7 @@ void Ant::run_tsp(){
         
         auto result = run(tour.size() - 1, _distance);
 
-        cout << "Old vs. new: " << tour.cost << ' ' << result.first << endl;
+        //cout << "Old vs. new: " << tour.cost << ' ' << result.first << endl;
         if(result.first < tour.cost){
             tour.cost = result.first;
             auto _tour = result.second;
@@ -90,7 +90,7 @@ void Ant::run_tsp(){
 
     for(int i = 0; i < tours.size(); i++){
         retag(i);
-        cout << "New cost " << i << ' ' << tours[i].cost << endl;
+        //cout << "New cost " << i << ' ' << tours[i].cost << endl;
     }
 
     calculate_result();
