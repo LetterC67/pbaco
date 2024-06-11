@@ -453,7 +453,7 @@ void TCross::swap(int &x, int &y){
 	y=s;
 }
 
-void TCross::changeSol( TIndi& tKid, int ABnum, int type ){
+void TCross::changeSol( TIndi& tKid, int ABnum, int type, bool mim = false){
 	int j;
 	int cem, r1, r2, b1, b2;
 	int po_r1, po_r2, po_b1, po_b2;
@@ -478,10 +478,12 @@ void TCross::changeSol( TIndi& tKid, int ABnum, int type ){
 		po_b1 = fInv[ b1 ];
 		po_b2 = fInv[ b2 ];
 
-		if( po_r1 == 0 && po_r2 == fN-1 ) fSegPosiList[ fNumOfSPL++ ] = po_r1;
-		else if( po_r1 == fN-1 && po_r2 == 0 ) fSegPosiList[ fNumOfSPL++ ] = po_r2;
-		else if( po_r1 < po_r2 ) fSegPosiList[ fNumOfSPL++ ] = po_r2;
-		else if( po_r2 < po_r1 ) fSegPosiList[ fNumOfSPL++ ] = po_r1;
+		if(mim){
+			if( po_r1 == 0 && po_r2 == fN-1 ) fSegPosiList[ fNumOfSPL++ ] = po_r1;
+			else if( po_r1 == fN-1 && po_r2 == 0 ) fSegPosiList[ fNumOfSPL++ ] = po_r2;
+			else if( po_r1 < po_r2 ) fSegPosiList[ fNumOfSPL++ ] = po_r2;
+			else if( po_r2 < po_r1 ) fSegPosiList[ fNumOfSPL++ ] = po_r1;
+		}
 
 		LinkBPosi[ po_r1 ][ 1 ] = LinkBPosi[ po_r1 ][ 0 ];
 		LinkBPosi[ po_r2 ][ 1 ] = LinkBPosi[ po_r2 ][ 0 ];
@@ -754,7 +756,7 @@ void TCross::goToBest( TIndi& tKid ){
 	fNumOfSPL = 0;
 	for( int s = 0; s < fNumOfBestAppliedCycle; ++s ){
 		jnum = fBestAppliedCylce[ s ];
-		this->changeSol( tKid, jnum, 1 );
+		this->changeSol( tKid, jnum, 1, true );
 	}
 
 	 for( int s = 0; s < fNumOfBestModiEdge; ++s ){
