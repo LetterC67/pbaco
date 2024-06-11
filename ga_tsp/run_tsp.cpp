@@ -28,9 +28,7 @@ pair<double, vector<int>> run(int N, vector<vector<double>> &distances){
 		gEnv->printOn(n);
 	}
 	auto result = gEnv -> bestSolution();
-	cout << "Got best solution " << endl;
 	delete gEnv;
 	gEnv = nullptr;
-	cout << "Deleted pointer" << endl;
     return result;
 }

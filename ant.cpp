@@ -65,7 +65,7 @@ void Ant::run_tsp(){
                 _distance[i][j] = _distance[j][i] = (*distance)[tour[i]][tour[j]];
             }
         }
-
+        
         auto result = run(tour.size() - 1, _distance);
 
         cout << "Old vs. new: " << tour.cost << ' ' << result.first << endl;

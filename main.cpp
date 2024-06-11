@@ -4,6 +4,7 @@
 #include "graph.h"
 #include "parameters.h"
 #include "stat.h"
+#include "ga_tsp/run_tsp.h"
 
 using namespace std;
 
