@@ -756,7 +756,7 @@ void TCross::goToBest( TIndi& tKid ){
 	fNumOfSPL = 0;
 	for( int s = 0; s < fNumOfBestAppliedCycle; ++s ){
 		jnum = fBestAppliedCylce[ s ];
-		this->changeSol( tKid, jnum, 1, true );
+		this->changeSol( tKid, jnum, 1, false );
 	}
 
 	 for( int s = 0; s < fNumOfBestModiEdge; ++s ){
