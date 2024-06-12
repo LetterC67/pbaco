@@ -39,7 +39,7 @@ public:
 
 	void swap(int &x, int &y);
 	void formABcycle(); // saves ab cycle
-	void changeSol( TIndi& tKid, int ABnum, int type, bool mim = false); // generates intermediate solution from ab cycle
+	void changeSol( TIndi& tKid, int ABnum, int type, bool ); // generates intermediate solution from ab cycle
 
 	void makeCompleteSol( TIndi& tKid ); // the 5th step of EAX
 	void makeUnit(); // the 5-1th step of EAX
