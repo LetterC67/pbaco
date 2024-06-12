@@ -453,7 +453,7 @@ void TCross::swap(int &x, int &y){
 	y=s;
 }
 
-void TCross::changeSol( TIndi& tKid, int ABnum, int type, bool mim = false){
+void TCross::changeSol( TIndi& tKid, int ABnum, int type, bool mim){
 	int j;
 	int cem, r1, r2, b1, b2;
 	int po_r1, po_r2, po_b1, po_b2;
