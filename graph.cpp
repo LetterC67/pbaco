@@ -196,6 +196,7 @@ void Graph::load_data(const string &file){
         int temp;
         ifs >> temp;
         ifs >> x[i] >> y[i];
+        //cout << x[i] << ' '  << y[i] << endl;
     }
 
     distance.resize(n);

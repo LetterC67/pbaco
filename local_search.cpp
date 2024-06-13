@@ -175,7 +175,7 @@ struct Segment{
         if((*graph).x[this -> u] > (*graph).x[this -> v]){
             swap(this -> u, this -> v);
         }
-        assert((*graph).x[this -> u] <= (*graph).x[this -> v]);
+        //assert((*graph).x[this -> u] <= (*graph).x[this -> v]);
     }
 };
 
@@ -184,7 +184,13 @@ float get_delta(int a, int b, int c, int d, _tour &tour, vector<vector<float>> *
     
 }
 
-void Ant::two_opt_sweepline(_tour &tour, int idx){
+struct sweepline_event{
+    float x;
+    int index;
+    bool type;
+};
+
+bool Ant::two_opt_sweepline(_tour &tour, int idx){
     vector<Segment> segment;
 
     for(int i = 0; i < tour.size() - 1; i++){
@@ -193,53 +199,50 @@ void Ant::two_opt_sweepline(_tour &tour, int idx){
 
     unordered_set<int> current;
 
-    map<float, vector<pair<int, int>>> event;
+    vector<sweepline_event> event;
+
 
     for(int i = 0; i < segment.size(); i++){
-        cout << (*graph).x[segment[i].u] << ' ' <<  (*graph).x[segment[i].v] << endl;
-        //assert((*graph).x[segment[i].u] < (*graph).x[segment[i].v]);
-        event[(*graph).x[segment[i].u]].push_back({1, i});
-        event[(*graph).x[segment[i].v]].push_back({-1, i});
+        event.push_back({(*graph).x[segment[i].u], i, 1});
+        event.push_back({(*graph).x[segment[i].v], i, 0});
     }
 
+    sort(event.begin(), event.end(), [](const sweepline_event &a, const sweepline_event &b){
+        if(a.x != b.x) return a.x < b.x;
+        return a.type < b.type;
+    });
+
+    bool used = false;
 
     for(auto &e : event){
-        //cout << e.first << endl;
-        for(auto &event : e.second){
-        
-            if(event.first == 1){
-                int a = position[segment[event.second].u], b = position[segment[event.second].v];
-                if(a > b) std::swap(a, b);
-                if(a + 1 != b) continue;
-                cout << current.size() << endl;
-                for(auto &i : current){
-                    int c = position[segment[i].u], d = position[segment[i].v];
-                    if(c > d) std::swap(c, d);
-                    if(c + 1 != d) continue;
-                    int aa = a, bb = b;
-                    if(aa > c) std::swap(aa, c), std::swap(bb, d);
-                    //cout << a << ' ' << b << ' ' << c << ' ' << d << endl;
-                    
-                    float delta = get_delta(aa, bb, c, d, tour, distance);
-                    if(delta < 0){
-                        tour.cost += delta;
-                        reverse(tour.begin() + bb, tour.begin() + c + 1);
-                        retag(idx);
-                        break;
-                    }
+        if(e.type){
+            int a = position[segment[e.index].u], b = position[segment[e.index].v];
+            if(a > b) std::swap(a, b);
+            if(a + 1 != b) continue;
+            /// cout << current.size() << endl;
+            for(auto &i : current){
+                int c = position[segment[i].u], d = position[segment[i].v];
+                if(c > d) std::swap(c, d);
+                if(c + 1 != d) continue;
+                int aa = a, bb = b;
+                if(aa > c) std::swap(aa, c), std::swap(bb, d);
+                
+                float delta = get_delta(aa, bb, c, d, tour, distance);
+                if(delta < 0){
+                    tour.cost += delta;
+                    reverse(tour.begin() + bb, tour.begin() + c + 1);
+                    retag(idx);
+                    used = true;
+                    break;
                 }
-                cout << "Insert" << endl;
-                current.insert(event.second);
-            }else{
-                cout << "erase " << ' ' << current.count(event.second) <<  endl;
-                current.erase(event.second);
             }
+            current.insert(e.index);
+        }else{
+            current.erase(e.index);
         }
-      //  cout << "done" << endl;
     }
-//    cout << "Exit" << endl;
-//    for(auto &d : tour) cout << d << ' ';
-//     cout << endl;
+    
+    return used;
 }
 
 void Ant::two_opt(_tour &tour){
@@ -299,7 +302,7 @@ int Ant::shortest_tour_index(){
 void Ant::intra_tour_optimization(){
     int idx = 0;
     for(auto &tour : tours){
-        two_opt_sweepline(tour, idx);
+        while(two_opt_sweepline(tour, idx)){}
         //two_opt(tour);
         or_opt(tour, idx);
         idx++;
