@@ -112,10 +112,6 @@ int main(int argc, char **args){
     omp_set_num_threads(threads);
 
 
-    if(argc == 4){
-        variation = string(args[3]);
-    }
-
     system("mkdir convergence");
     system("mkdir result");
 
