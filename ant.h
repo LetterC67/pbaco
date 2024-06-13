@@ -81,7 +81,7 @@ struct Ant{
     bool swap_tail(_tour &a, _tour &b, int idx_a, int idx_b);
 
     void two_opt(_tour &tour);
-    void or_opt(_tour &tour);
+    void or_opt(_tour &tour, int idx);
     void run_dp(_tour &x, _tour &y);
     void run_tsp();
     void dp();

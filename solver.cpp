@@ -152,6 +152,14 @@ void mTSPSolver::solve(){
         program_time *= 1e-9;
 
         if(cutoff_time != -1 && program_time > cutoff_time) break;
+
+        for(int i = 0; i < n; i++){
+            sort(graph.closest[i].begin(), graph.closest[i].end(), [&](const int &a, const int &b){
+                if(gbest.assigned[a] != gbest.assigned[b])
+                    return gbest.assigned[a] < gbest.assigned[b];
+                return gbest.position[a] < gbest.position[b];
+            });
+        }
     }
 
     cout << "Result: " << gbest.min_max_cost << endl;

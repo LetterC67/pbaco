@@ -174,10 +174,12 @@ void Ant::two_opt(_tour &tour){
         }
 }
 
-void Ant::or_opt(_tour &tour){
+void Ant::or_opt(_tour &tour, int idx){
     for(int opt_size = 1; opt_size <= OPT_SIZE; opt_size++){
         for(int i = 1; i < (int)tour.size() - opt_size ; i++){
-            for(int j = 0; j < (int)tour.size() - 2; j++){
+            for(auto &jj : (*graph).closest[tour[i + opt_size - 1]]){
+                if(assigned[jj] != idx) continue;
+                int j = position[jj] - 1;
                 if(i - 1 <= j && j <= i + opt_size - 1) continue;
                 float delta = (*distance)[tour[j]][tour[i]] + (*distance)[tour[i + opt_size - 1]][tour[j + 1]] + (*distance)[tour[i - 1]][tour[i + opt_size]]
                     - (*distance)[tour[j]][tour[j + 1]] - (*distance)[tour[i - 1]][tour[i]] - (*distance)[tour[i + opt_size - 1]][tour[i + opt_size]];
@@ -217,9 +219,11 @@ int Ant::shortest_tour_index(){
 
 
 void Ant::intra_tour_optimization(){
+    int idx = 0;
     for(auto &tour : tours){
         two_opt(tour);
-        or_opt(tour);
+        or_opt(tour, idx);
+        idx++;
     }
     for(int i = 0; i < tours.size(); i++)
         retag(i);
@@ -293,6 +297,8 @@ void Ant::local_search(){
     for(int i = 0; i < LOCAL_SEARCH_ITERATIONS; i++){
         for(int j = 0; j < INTER_TOUR_INTERATIONS; j++)
             inter_tour_optimization();
+
         intra_tour_optimization();
     }
+     
 }
