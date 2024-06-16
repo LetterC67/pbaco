@@ -99,7 +99,7 @@ void Ant::run_tsp(){
 Ant trim(Ant ant){
     int salesmen = ant.tours.size();
             
-    int del_count = rng() % int((salesmen + 1) / 2 );
+    int del_count = rng() % ((salesmen + 1) / 2);
     int last_del = rng() % salesmen;
     unordered_set<int> del_list = {last_del};
 
@@ -115,9 +115,10 @@ Ant trim(Ant ant){
         for(int i = 0; i < salesmen; i++){
             if(!del_list.count(i) && dis[last_del][i] < d){
                 d = dis[last_del][i];
-                del_list.insert(i);
+                next_del = i;
             }
         }
+        del_list.insert(next_del);
     }
 
     for(int i = 0; i < ant.tours.size(); i++){

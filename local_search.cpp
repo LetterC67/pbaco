@@ -39,6 +39,9 @@ float Ant::tour_length(_tour &tour){
 bool Ant::swap(_tour &a, _tour &b, int idx_b){
     bool swapped = false;
 
+    int ii = -1, jj = -1;
+    double min_cost = 1e9;
+
     for(int i = 1; i < a.size() - 1; i++){
         for(int &u : (*graph).closest[a[i]]){
             if(assigned[u] != idx_b) continue;
@@ -46,15 +49,27 @@ bool Ant::swap(_tour &a, _tour &b, int idx_b){
             float delta_a = -(*distance)[a[i - 1]][a[i]] - (*distance)[a[i]][a[i + 1]] + (*distance)[a[i - 1]][b[j]] + (*distance)[b[j]][a[i + 1]];
             float delta_b = -(*distance)[b[j - 1]][b[j]] - (*distance)[b[j]][b[j + 1]] + (*distance)[b[j - 1]][a[i]] + (*distance)[a[i]][b[j + 1]]; 
             if(delta_a < 0 && delta_b < 0){
-                swapped = true;
+                // if(a.cost + b.cost < min_cost){
+                //     min_cost = a.cost + b.cost;
+                //     ii = i;
+                //     jj = j;
+                // }
                 std::swap(assigned[a[i]], assigned[b[j]]);
                 std::swap(position[a[i]], position[b[j]]);
                 std::swap(a[i], b[j]);
                 a.cost += delta_a;
                 b.cost += delta_b;
+                swapped = true;
             }
         }
     }
+
+    // if(ii == -1) return false;
+
+    // int i = ii, j = jj;
+    // float delta_a = -(*distance)[a[i - 1]][a[i]] - (*distance)[a[i]][a[i + 1]] + (*distance)[a[i - 1]][b[j]] + (*distance)[b[j]][a[i + 1]];
+    // float delta_b = -(*distance)[b[j - 1]][b[j]] - (*distance)[b[j]][b[j + 1]] + (*distance)[b[j - 1]][a[i]] + (*distance)[a[i]][b[j + 1]]; 
+    
 
     return swapped;
 }
@@ -63,6 +78,8 @@ bool Ant::relocate(_tour &a, _tour &b, int idx_a, int idx_b){
     if(a.cost < b.cost ) return false;
 
     bool relocated = false;
+    double min_cost = 1e9;
+    int ii = -1, jj = -1;
 
     for(int i = 1; i < a.size() - 1; i++){
         for(int &u : (*graph).closest[a[i]]){
@@ -71,23 +88,35 @@ bool Ant::relocate(_tour &a, _tour &b, int idx_a, int idx_b){
             float delta_decrease_a = -(*distance)[a[i - 1]][a[i]] - (*distance)[a[i]][a[i + 1]] + (*distance)[a[i - 1]][a[i + 1]];
             float delta_increase_b = -(*distance)[b[j - 1]][b[j]] + (*distance)[b[j - 1]][a[i]] + (*distance)[a[i]][b[j]];
 
-            if(max(a.cost + delta_decrease_a, b.cost + delta_increase_b) < max(a.cost, b.cost)){
-                relocated = true;
-                a.cost += delta_decrease_a;
-                b.cost += delta_increase_b;
-            
-                b.tour.insert(b.begin() + j, a[i]);
-                a.tour.erase(a.begin() + i);
-
-                retag(idx_a);
-                retag(idx_b);
+            if(delta_decrease_a + delta_increase_b < 0){
+                if(min_cost > delta_decrease_a + delta_increase_b){
+                    min_cost = delta_decrease_a + delta_increase_b;
+                    ii = i;
+                    jj = j;
+                }
                 
                 break;
             }
         }
     }
 
-    return relocated;
+    if(ii == -1) return false;
+
+    int i = ii, j = jj;
+
+    float delta_decrease_a = -(*distance)[a[i - 1]][a[i]] - (*distance)[a[i]][a[i + 1]] + (*distance)[a[i - 1]][a[i + 1]];
+    float delta_increase_b = -(*distance)[b[j - 1]][b[j]] + (*distance)[b[j - 1]][a[i]] + (*distance)[a[i]][b[j]];
+
+    a.cost += delta_decrease_a;
+    b.cost += delta_increase_b;
+
+    b.tour.insert(b.begin() + j, a[i]);
+    a.tour.erase(a.begin() + i);
+
+    retag(idx_a);
+    retag(idx_b);
+
+    return true;
 }
 
 bool Ant::swap_tail(_tour &a, _tour &b, int idx_a, int idx_b){
@@ -110,6 +139,9 @@ bool Ant::swap_tail(_tour &a, _tour &b, int idx_a, int idx_b){
         suf_b[i] = suf_b[i + 1] + (*distance)[b[i + 1]][b[i]];   
     }
 
+    double min_cost = 1e9;
+    int ii = -1, jj = -1, type = -1;
+
     for(int i = 1; i < a.size() - 1; i++){
         for(int &u : (*graph).closest[a[i]]){
             if(assigned[u] != idx_b) continue;
@@ -117,51 +149,72 @@ bool Ant::swap_tail(_tour &a, _tour &b, int idx_a, int idx_b){
             float new_cost_a = pref_a[i - 1] + suf_b[j] + (*distance)[a[i - 1]][b[j]];
             float new_cost_b = pref_b[j - 1] + suf_a[i] + (*distance)[b[j - 1]][a[i]];
         
-            if(max(new_cost_a, new_cost_b) < max(a.cost, b.cost)){
-                a.cost = new_cost_a;
-                b.cost = new_cost_b;
+            float dak = (*distance)[a[i - 1]][b[j]] + (*distance)[b[j - 1]][a[i]];
+            float mim = (*distance)[a[i - 1]][b[j - 1]]  + (*distance)[a[i]][b[j]];
 
-                vector<int> c = a.tour, d = b.tour;
-                while(a.size() > i) a.tour.pop_back();
-                while(b.size() > j) b.tour.pop_back();
-
-                for(int k = i; k < c.size(); k++) b.push_back(c[k]);
-                for(int k = j; k < d.size(); k++) a.push_back(d[k]);
-
-                retag(idx_a);
-                retag(idx_b);
-
-                return true;
+            if(dak < mim && max(new_cost_a, new_cost_b) < max(a.cost, b.cost)){
+                if(new_cost_a + new_cost_b < min_cost){
+                    min_cost = new_cost_a + new_cost_b;
+                    ii = i;
+                    jj = j;
+                    type = 0;
+                }
             }
 
             new_cost_a = pref_a[i - 1] + pref_b[j - 1] + (*distance)[a[i - 1]][b[j - 1]];
             new_cost_b = suf_a[i] + suf_b[j] + (*distance)[a[i]][b[j]];
 
-            if(max(new_cost_a, new_cost_b) < max(a.cost, b.cost)){
-                a.cost = new_cost_a;
-                b.cost = new_cost_b;
-
-                vector<int> c = vector<int>(a.tour.begin() + i, a.tour.end()),
-                            d = vector<int>(b.tour.begin() + j, b.tour.end());
-                a.tour.erase(a.tour.begin() + i, a.tour.end());
-                b.tour.erase(b.tour.begin() + j, b.tour.end());
-
-                reverse(b.begin(), b.end());;
-                a.tour.insert(a.end(), b.begin(), b.end());
-                
-                reverse(c.begin(), c.end());
-                b.tour = c;
-                b.tour.insert(b.end(), d.begin(), d.end());
-
-                retag(idx_a);
-                retag(idx_b);
-
-                return true;
+            if(mim < dak && max(new_cost_a, new_cost_b) < max(a.cost, b.cost)){
+                if(new_cost_a + new_cost_b < min_cost){
+                    min_cost = new_cost_a + new_cost_b;
+                    ii = i;
+                    jj = j;
+                    type = 1;
+                }
             }
         }
     }
 
-    return false;
+    if(type == -1) return false;
+
+    int i = ii, j = jj;
+
+    if(type == 0){
+        float new_cost_a = pref_a[i - 1] + suf_b[j] + (*distance)[a[i - 1]][b[j]];
+        float new_cost_b = pref_b[j - 1] + suf_a[i] + (*distance)[b[j - 1]][a[i]];
+
+        a.cost = new_cost_a;
+        b.cost = new_cost_b;
+
+        vector<int> c = a.tour, d = b.tour;
+        while(a.size() > i) a.tour.pop_back();
+        while(b.size() > j) b.tour.pop_back();
+
+        for(int k = i; k < c.size(); k++) b.push_back(c[k]);
+        for(int k = j; k < d.size(); k++) a.push_back(d[k]);
+    }else{
+        float new_cost_a = pref_a[i - 1] + pref_b[j - 1] + (*distance)[a[i - 1]][b[j - 1]];
+        float new_cost_b = suf_a[i] + suf_b[j] + (*distance)[a[i]][b[j]];
+        
+        a.cost = new_cost_a;
+        b.cost = new_cost_b;
+
+        vector<int> c = vector<int>(a.tour.begin() + i, a.tour.end()),
+                    d = vector<int>(b.tour.begin() + j, b.tour.end());
+        a.tour.erase(a.tour.begin() + i, a.tour.end());
+        b.tour.erase(b.tour.begin() + j, b.tour.end());
+
+        reverse(b.begin(), b.end());
+        a.tour.insert(a.end(), b.begin(), b.end());
+        
+        reverse(c.begin(), c.end());
+        b.tour = c;
+        b.tour.insert(b.end(), d.begin(), d.end());
+    }
+
+    retag(idx_a);
+    retag(idx_b);
+    return true;
 }
 
 struct Point{

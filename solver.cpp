@@ -81,6 +81,8 @@ vector<Ant> mTSPSolver::build_solutions(){
 }
 
 void mTSPSolver::update_pheromone(){
+    auto p = pheromone;
+
     for(int i = 0; i < n; i++){
         for(int j = 0; j < n; j++){
             pheromone[i][j] = pheromone[i][j] * (1 - RHO) + TAU_MIN * RHO;
@@ -89,7 +91,7 @@ void mTSPSolver::update_pheromone(){
 
     for(auto &tour : gbest.tours){
         for(int i = 0; i < tour.size() - 1; i++){
-            pheromone[tour[i]][tour[i + 1]] = pheromone[tour[i]][tour[i + 1]] * (1 - RHO) - TAU_MIN * RHO + TAU_MAX * RHO;
+            pheromone[tour[i]][tour[i + 1]] = p[tour[i]][tour[i + 1]] * (1 - RHO) + TAU_MAX * RHO;
         }
     }
 }
