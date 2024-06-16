@@ -327,6 +327,23 @@ void Ant::or_opt(_tour &tour, int idx){
     }
 }
 
+void Ant::or_opt(_tour &tour){
+    for(int opt_size = 1; opt_size <= OPT_SIZE; opt_size++){
+        for(int i = 1; i < (int)tour.size() - opt_size ; i++){
+            for(int j = 1; j < tour.size() - 1; j++){
+                if(i - 1 <= j && j <= i + opt_size - 1) continue;
+                float delta = (*distance)[tour[j]][tour[i]] + (*distance)[tour[i + opt_size - 1]][tour[j + 1]] + (*distance)[tour[i - 1]][tour[i + opt_size]]
+                    - (*distance)[tour[j]][tour[j + 1]] - (*distance)[tour[i - 1]][tour[i]] - (*distance)[tour[i + opt_size - 1]][tour[i + opt_size]];
+
+                if(delta < 0){
+                    move_segment(tour.tour, i, i + opt_size - 1, j);
+                    tour.cost += delta;
+                }
+            }
+        }
+    }
+}
+
 int Ant::longest_tour_index(){
     float cost = 0;
     int index = 0;
@@ -357,7 +374,9 @@ void Ant::intra_tour_optimization(){
     for(auto &tour : tours){
         while(two_opt_sweepline(tour, idx)){}
         //two_opt(tour);
+        if(tour.size() > 500)
         or_opt(tour, idx);
+        else or_opt(tour);
         idx++;
     }
     for(int i = 0; i < tours.size(); i++)

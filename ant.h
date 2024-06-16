@@ -83,6 +83,7 @@ struct Ant{
     bool two_opt_sweepline(_tour &tour, int idx);
     void two_opt(_tour &tour);
     void or_opt(_tour &tour, int idx);
+    void or_opt(_tour &tour);
     void run_dp(_tour &x, _tour &y);
     void run_tsp();
     void dp();
