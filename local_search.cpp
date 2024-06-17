@@ -152,7 +152,7 @@ bool Ant::swap_tail(_tour &a, _tour &b, int idx_a, int idx_b){
             float dak = (*distance)[a[i - 1]][b[j]] + (*distance)[b[j - 1]][a[i]];
             float mim = (*distance)[a[i - 1]][b[j - 1]]  + (*distance)[a[i]][b[j]];
 
-            if( max(new_cost_a, new_cost_b) < max(a.cost, b.cost)){
+            if(dak < mim && max(new_cost_a, new_cost_b) < max(a.cost, b.cost)){
                 if(new_cost_a + new_cost_b < min_cost){
                     min_cost = new_cost_a + new_cost_b;
                     ii = i;
@@ -164,7 +164,7 @@ bool Ant::swap_tail(_tour &a, _tour &b, int idx_a, int idx_b){
             new_cost_a = pref_a[i - 1] + pref_b[j - 1] + (*distance)[a[i - 1]][b[j - 1]];
             new_cost_b = suf_a[i] + suf_b[j] + (*distance)[a[i]][b[j]];
 
-            if(max(new_cost_a, new_cost_b) < max(a.cost, b.cost)){
+            if(mim < dak && max(new_cost_a, new_cost_b) < max(a.cost, b.cost)){
                 if(new_cost_a + new_cost_b < min_cost){
                     min_cost = new_cost_a + new_cost_b;
                     ii = i;
