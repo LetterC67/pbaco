@@ -372,8 +372,10 @@ int Ant::shortest_tour_index(){
 void Ant::intra_tour_optimization(){
     int idx = 0;
     for(auto &tour : tours){
-        two_opt_sweepline(tour, idx);
-        //two_opt(tour);
+        // two_opt_sweepline(tour, idx);
+        // two_opt_sweepline(tour, idx);
+        // two_opt_sweepline(tour, idx);
+        two_opt(tour);
         if(tour.size() > 500)
         or_opt(tour, idx);
         else or_opt(tour);
