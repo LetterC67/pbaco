@@ -56,7 +56,7 @@ float Ant::tour_distance(_tour& a, _tour &b){
 
 void Ant::run_tsp(){
     for(auto &tour : tours){
-        if(tour.size() <= 51) continue;
+        if(tour.size() <= 60) continue;
 
         vector<vector<double>> _distance(tour.size() - 1, vector<double>(tour.size() - 1));
 
@@ -134,4 +134,24 @@ Ant trim(Ant ant){
     ant.del = del_list;
 
     return ant;
+}
+
+void Ant::verify(int n){
+    unordered_set<int> s;
+    for(auto &tour : tours){
+        for(int i = 1; i < tour.size() - 1; i++){
+            if(s.count(tour[i])) assert(false);
+            s.insert(tour[i]);
+        }
+        // if(abs(tour.cost - tour_length(tour)) > 1e-3){
+        //     cout << tour.cost << ' ' << tour_length(tour) << endl;
+        // }
+        assert(abs(tour.cost - tour_length(tour)) < 1);
+
+        assert(tour.tour.front() == 0);
+        assert(tour.tour.back() == 0);
+    }
+    assert(s.size() == n - 1);
+
+
 }

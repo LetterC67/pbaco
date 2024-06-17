@@ -87,6 +87,7 @@ struct Ant{
     void run_dp(_tour &x, _tour &y);
     void run_tsp();
     void dp();
+    void verify(int n);
 
     void intra_tour_optimization();
     void inter_tour_optimization();

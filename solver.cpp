@@ -162,6 +162,8 @@ void mTSPSolver::solve(){
                 return gbest.position[a] < gbest.position[b];
             });
         }
+        
+        gbest.verify(n);
     }
 
     cout << "Result: " << gbest.min_max_cost << endl;
