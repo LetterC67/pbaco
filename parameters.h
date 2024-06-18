@@ -2,7 +2,7 @@
 #define PARAMETERS_H
 
 const int BETA = 5;
-const float RHO = .1;
+const float RHO = .075;
 const float ANTS_MULTIPLIER = .05;
 const int DEPOT = 0;
 const int NUM_THREADS = 1;

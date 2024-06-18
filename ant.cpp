@@ -56,7 +56,7 @@ float Ant::tour_distance(_tour& a, _tour &b){
 
 void Ant::run_tsp(){
     for(auto &tour : tours){
-        if(tour.size() <= 60) continue;
+        if(tour.size() <= 80) continue;
 
         vector<vector<double>> _distance(tour.size() - 1, vector<double>(tour.size() - 1));
 
@@ -107,6 +107,16 @@ Ant trim(Ant ant){
     for(int i = last_del; i <= last_del; i++)
         for(int j = i + 1; j < salesmen; j++)
             dis[i][j] = dis[j][i] = ant.tour_distance(ant.tours[i], ant.tours[j]);
+
+    // vector<int> v;
+    // for(int i = 0; i < salesmen; i++)
+    //     if(!del_list.count(i))
+    //         v.push_back(i);
+
+    // shuffle(v.begin(), v.end(), rng);
+
+    // for(int i = 0; i < del_count; i++)
+    //     del_list.insert(v[i]);
 
     while(del_count--){
         int next_del = 0;

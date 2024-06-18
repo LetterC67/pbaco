@@ -375,7 +375,8 @@ void Ant::intra_tour_optimization(){
         // two_opt_sweepline(tour, idx);
         // two_opt_sweepline(tour, idx);
         // two_opt_sweepline(tour, idx);
-        two_opt(tour);
+        if(tour.size() > 500)two_opt_sweepline(tour, idx);
+        else two_opt(tour);
         if(tour.size() > 500)
         or_opt(tour, idx);
         else or_opt(tour);
@@ -432,7 +433,7 @@ void Ant::inter_tour_optimization(){
     for(int i = 0; i < tours.size(); i++){
         for(int tour = 0; tour < tours.size(); tour++)
         if(tour != i)
-            loop |= relocate(tours[ord[i]], tours[ord[tour]], ord[i], ord[tour]); 
+            while(relocate(tours[ord[i]], tours[ord[tour]], ord[i], ord[tour])){}
     }
     for(int i = 0; i < tours.size(); i++){
         for(int tour = 0; tour < tours.size(); tour++)
