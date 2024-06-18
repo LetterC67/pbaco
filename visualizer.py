@@ -33,7 +33,7 @@ def read(file_path):
 
 # Create the plot
 plt.figure(figsize=(10, 6))
-datasets = [ 'convergence/d1655_5', 'convergence/d1655_5_--thread=32']
+datasets = [ 'convergence/u2152_5_', 'convergence/u2152_5_random2']
 
 # Generate and plot each dataset
 for dataset in datasets:

@@ -17,8 +17,8 @@ const int ANTS = 16;
 const int INTER_TOUR_INTERATIONS = 1;
 const int MIN_ANT = 40;
 const int MAX_STAGNATION = 50;
-const int MIN_CLOSEST_COUNT = 50;
-const int MAX_CLOSEST_COUNT = 100;
+const int NEAREST_NEIGHTBOR_LIMIT = 20;
+const int ALPHA_NEARNESS_LIMIT = 20;
 const int RUN = 30;
 const double CLOSEST_RATE = 0.1;
 
