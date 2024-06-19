@@ -122,7 +122,6 @@ int main(int argc, char **args){
     Graph graph;
     graph.load_data(dataset);
 
-    Stat stat(variation, graph, salesmen);
 
     for(auto &mn : min_pop){
         for(auto &mx : max_pop){
@@ -131,6 +130,7 @@ int main(int argc, char **args){
                 MAX_POPULATION_SIZE = mx;
                 DIFFERENCE_COEFFICIENT = pop;
                 variation = "tuning_" + to_string(mn) + "_" + to_string(mx) + "_" + to_string(pop);
+                Stat stat(variation, graph, salesmen);
                 for(int i = 0; i < run; i++){
                     cout << "Run " << i + 1 << endl;
                     mTSPSolver solver(graph, salesmen, cutoff_time, cutoff_interation);

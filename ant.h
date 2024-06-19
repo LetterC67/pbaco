@@ -65,11 +65,6 @@ struct Ant{
         assigned = vector<int>(graph -> n);
         position = vector<int>(graph -> n);
     }
-    
-    ~Ant(){
-        delete graph;
-        delete distance;
-    }
 
     void retag(int index);
     int longest_tour_index();

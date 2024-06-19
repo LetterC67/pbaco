@@ -1,1 +1,1 @@
-g++ -std=c++23 -O3 -fopenmp parameters.cpp main.cpp graph.cpp solver.cpp utils.cpp ant.cpp random.cpp local_search.cpp population.cpp stat.cpp ga_tsp/*.cpp -g -fvar-tracking
+g++  -std=c++23 -O3 -fopenmp parameters.cpp main.cpp graph.cpp solver.cpp utils.cpp ant.cpp random.cpp local_search.cpp population.cpp stat.cpp ga_tsp/*.cpp -g -fvar-tracking

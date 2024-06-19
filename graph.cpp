@@ -279,9 +279,7 @@ void Graph::init_closest(){
     }
 
     OneMinimumSpanningTree one_tree(0, n, ALPHA_NEARNESS_LIMIT, distance);
-    cout << "calc" << endl;
     auto _closest = one_tree.computeCandidateSet();
-    cout << "done" << endl;
 
     for(int i = 0; i < n; i++){
         closest[i].insert(closest[i].end(), _closest[i].begin(), _closest[i].end());
@@ -324,7 +322,6 @@ void Graph::load_data(const string &file){
         int temp;
         ifs >> temp;
         ifs >> x[i] >> y[i];
-        //cout << x[i] << ' '  << y[i] << endl;
     }
 
     distance.resize(n);
