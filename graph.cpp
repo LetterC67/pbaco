@@ -27,7 +27,7 @@ struct OneMinimumSpanningTree {
     vector<int> bestTopo;
     vector<double> bestW;
     unordered_set<pair<int, int>, pair_hash> bestEdges;
-    vector<vector<float>> dis;
+    vector<vector<double>> dis;
 
     /*
      * Implement Prim Algorithm to find the minimum spanning tree without the source node
@@ -36,7 +36,7 @@ struct OneMinimumSpanningTree {
      * The function will return for each node the 0.1 * numNodes closest to it base on alpha
     */
 
-    OneMinimumSpanningTree(int _sourceNode, int _numNodes, int _chooseRate,  vector<vector<float>> dis): 
+    OneMinimumSpanningTree(int _sourceNode, int _numNodes, int _chooseRate,  vector<vector<double>> dis): 
         sourceNode(_sourceNode), 
         numNodes(_numNodes),
         d(_numNodes),
@@ -258,7 +258,7 @@ struct OneMinimumSpanningTree {
 };
 
 
-float Graph::calculate_distance(int i, int j) {
+double Graph::calculate_distance(int i, int j) {
     if(EDGE_WEIGHT_TYPE == "ATT"){
         return (int)ceil(sqrt(((x[i] - x[j]) * (x[i] - x[j]) + (y[i] - y[j]) * (y[i] - y[j])) / 10.));
     }else{

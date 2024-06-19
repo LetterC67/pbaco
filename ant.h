@@ -8,7 +8,7 @@ using namespace std;
 
 struct _tour{
     vector<int> tour;
-    float cost;
+    double cost;
 
     _tour(){
         cost = 0.;
@@ -45,14 +45,14 @@ struct _tour{
 };
 
 struct Ant{      
-    vector<vector<float>> *distance;
+    vector<vector<double>> *distance;
     Graph *graph;
     vector<_tour> tours;
     vector<int> assigned, position;
     unordered_set<int> del;
-    float min_max_cost;
-    float min_sum_cost;
-    float sqrt_cost;
+    double min_max_cost;
+    double min_sum_cost;
+    double sqrt_cost;
 
     Ant(){
         min_max_cost = 1e9;
@@ -60,7 +60,7 @@ struct Ant{
     }
 
 
-    Ant(int salesmen, vector<vector<float>> *distance, Graph *graph): graph(graph), distance(distance){
+    Ant(int salesmen, vector<vector<double>> *distance, Graph *graph): graph(graph), distance(distance){
         tours = vector<_tour>(salesmen);
         for(int i = 0; i < salesmen; i++) del.insert(i);
         assigned = vector<int>(graph -> n);
@@ -70,8 +70,8 @@ struct Ant{
     void retag(int index);
     int longest_tour_index();
     int shortest_tour_index();
-    float tour_length(_tour &tour);
-    float tour_distance(_tour &a, _tour &b);
+    double tour_length(_tour &tour);
+    double tour_distance(_tour &a, _tour &b);
 
     void add(int salesman, int vertex);
     void add(_tour &tour, int vertex);

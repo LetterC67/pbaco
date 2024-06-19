@@ -5,7 +5,7 @@
 using namespace std;
 
 struct state{
-    array<float, 2> dp;
+    array<double, 2> dp;
     state *trace;
     char update_type;
     state(){
@@ -15,7 +15,7 @@ struct state{
 };
 
 
-bool set_min_max(array<float,2> &a, array<float,2> b){
+bool set_min_max(array<double,2> &a, array<double,2> b){
     if(max(a[0], a[1]) > max(b[0], b[1])){
         a = b;
         return true;
@@ -23,7 +23,7 @@ bool set_min_max(array<float,2> &a, array<float,2> b){
     return false;
 }
 
-bool set_min_sum(array<float,2> &a, array<float,2> b){
+bool set_min_sum(array<double,2> &a, array<double,2> b){
     if(a[0] + a[1] > b[0] + b[1]){
         a = b;
         return true;
@@ -31,7 +31,7 @@ bool set_min_sum(array<float,2> &a, array<float,2> b){
     return false;
 }
 
-bool set_avg(array<float,2> &a, array<float,2> b){
+bool set_avg(array<double,2> &a, array<double,2> b){
     if(sqrt(a[0] * a[0] + a[1] * a[1]) > sqrt(b[0] * b[0] + b[1] * b[1])){
         a = b;
         return true;
@@ -41,7 +41,7 @@ bool set_avg(array<float,2> &a, array<float,2> b){
 
 
 
-bool (*objective_functions[3])(array<float,2> &, array<float,2> ) = {&set_min_max, &set_min_sum, &set_avg};
+bool (*objective_functions[3])(array<double,2> &, array<double,2> ) = {&set_min_max, &set_min_sum, &set_avg};
 
 vector<vector<int>> trace(int i, int j, int k, int part, int type, vector<vector<vector<vector<vector   <state>>>>> &dp, vector<int> a[]){
     state* s = &dp[i][j][k][part][type];
@@ -107,7 +107,7 @@ vector<vector<int>> trace(int i, int j, int k, int part, int type, vector<vector
 }
 
 void Ant::run_dp(_tour &x, _tour &y){
-    float partition_size = ceil(max(x.cost, y.cost) * 1.1 / (float)DP_PARTITION_COUNT);
+    double partition_size = ceil(max(x.cost, y.cost) * 1.1 / (double)DP_PARTITION_COUNT);
     vector<int> a[2] = {x.tour, y.tour};
 
     vector<vector<vector<vector<vector<state>>>>> dp(a[0].size() + 2, 
@@ -174,7 +174,7 @@ void Ant::run_dp(_tour &x, _tour &y){
                         if(i < a[0].size() - 1 ){
                             for(int upd = 0; upd < 3; upd++){
                                 int last = a[0][i];
-                                float cost = 0;
+                                double cost = 0;
                                 for(int l = j + 1; l < min(j + 5, (int)a[1].size() - 1); l++){
                                     cost += (*distance)[last][a[1][l]];
                                     last = a[1][l];
@@ -195,7 +195,7 @@ void Ant::run_dp(_tour &x, _tour &y){
                         if(j < a[1].size() - 1 ){
                             for(int upd = 0; upd < 3; upd++){
                                 int last = a[1][j];
-                                float cost = 0;
+                                double cost = 0;
                                 for(int l = i + 1; l < min(i + 5, (int)a[0].size() - 1); l++){
                                     cost += (*distance)[last][a[0][l]];
                                     last = a[0][l];
@@ -219,7 +219,7 @@ void Ant::run_dp(_tour &x, _tour &y){
         }
     }
 
-    array<float, 2> best = {1e9,1e9};
+    array<double, 2> best = {1e9,1e9};
     int kk, pp, tt;
     for(int k = 0; k < 2; k++){
         for(int part = 0; part < DP_PARTITION_COUNT; part++){

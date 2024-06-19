@@ -25,7 +25,7 @@ def read(file_path):
         for line in file:
             # Strip any leading/trailing whitespace (including newlines)
             line = line.strip().split()[1]
-            numbers.append(float(line))
+            numbers.append(double(line))
 
     print(numbers)
     return numbers

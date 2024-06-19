@@ -145,12 +145,12 @@ void mTSPSolver::solve(){
         // }
 
         auto end_itertation = chrono::high_resolution_clock::now();
-        float iteration_time = chrono::duration_cast<chrono::nanoseconds>(end_itertation - start_iteration).count();
+        double iteration_time = chrono::duration_cast<chrono::nanoseconds>(end_itertation - start_iteration).count();
         iteration_time *= 1e-9;
 
         cout << "Iteration " << iteration << ' ' << gbest.min_max_cost << ' ' << ibest.min_max_cost << ' ' << no_improve << ' ' << iteration_time << endl;
 
-        float program_time = chrono::duration_cast<chrono::nanoseconds>(end_itertation - start_time).count();
+        double program_time = chrono::duration_cast<chrono::nanoseconds>(end_itertation - start_time).count();
         program_time *= 1e-9;
 
         if(cutoff_time != -1 && program_time > cutoff_time) break;
