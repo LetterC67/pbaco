@@ -23,7 +23,7 @@ static struct option long_options[] = {
 };
 
 vector<int> min_pop = {10, 15, 20};
-vector<int> max_pop = {25, 30, 25};
+vector<int> max_pop = {100};
 vector<double> pop_arg = {1.15, 1.2, 1.25};
 
 
