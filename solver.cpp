@@ -96,7 +96,7 @@ void mTSPSolver::update_pheromone(){
     }
 }
 
-void mTSPSolver::solve(){
+void mTSPSolver::solve(Stat &stat){
     auto start_time = chrono::high_resolution_clock::now();
 
     
@@ -129,7 +129,7 @@ void mTSPSolver::solve(){
             
         }
 
-        add(iteration - 1, gbest.min_max_cost);
+        stat.add(iteration - 1, gbest.min_max_cost);
 
         // if(iteration % 10 == 0){
         //     for(auto &tour : gbest.tours){

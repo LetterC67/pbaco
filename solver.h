@@ -5,6 +5,7 @@
 #include "graph.h"
 #include "parameters.h"
 #include "ant.h"
+#include "stat.h"
 #include "population.h"
 
 using namespace std;
@@ -34,7 +35,7 @@ struct mTSPSolver{
         population = Population(n, salesmen);
     }
 
-    void solve();
+    void solve(Stat &stat);
     void update_pheromone();
     vector<Ant> build_solutions();
     Ant build_solution(Ant ant);

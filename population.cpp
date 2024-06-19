@@ -18,7 +18,6 @@ double Population::ant_distance(Ant &a, unordered_set<int> &edge){
 void Population::kill(){
     vector<double> fitness(population.size());
     vector<int> index;
-
     for(int i = 0; i < population.size(); i++){
         double mx = 0.;
         index.push_back(i);
@@ -35,7 +34,7 @@ void Population::kill(){
         }
         sort(v.begin(), v.end(), greater<double>());
 
-        fitness[i] = population[i].min_max_cost * powl(POP_ARGS, (v[0] + v[1]) / 2);
+        fitness[i] = population[i].min_max_cost * powl(DIFFERENCE_COEFFICIENT, (v[0] + v[1]) / 2.);
     }
 
     sort(index.begin(), index.end(), [&](const int &a, const int &b){

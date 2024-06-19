@@ -1,28 +1,28 @@
 #ifndef PARAMETERS_H
 #define PARAMETERS_H
 
-const int BETA = 5;
-const double RHO = .075;
-const double ANTS_MULTIPLIER = .05;
-const int DEPOT = 0;
-const int NUM_THREADS = 1;
-const double TAU_MAX = 1.;
-const double RATIO = 80;
-const int OPT_SIZE = 4;
-const double POP_ARGS = 1.2;
-const int MIN_POPULATION_SIZE = 15;
-const int MAX_POPULATION_SIZE = 30;
-const int LOCAL_SEARCH_ITERATIONS = 7;
-const int ANTS = 16;
-const int INTER_TOUR_INTERATIONS = 1;
-const int MIN_ANT = 40;
-const int MAX_STAGNATION = 50;
-const int NEAREST_NEIGHTBOR_LIMIT = 25;
-const int ALPHA_NEARNESS_LIMIT = 25;
-const int RUN = 30;
-const double CLOSEST_RATE = 0.1;
+extern const int BETA;
+extern const double RHO;
+extern const double ANTS_MULTIPLIER;
+extern const int DEPOT;
+extern const int NUM_THREADS;
+extern const double TAU_MAX;
+extern const double RATIO;
+extern const int OPT_SIZE;
+extern double DIFFERENCE_COEFFICIENT;
+extern int MIN_POPULATION_SIZE;
+extern int MAX_POPULATION_SIZE;
+extern const int LOCAL_SEARCH_ITERATIONS;
+extern const int ANTS;
+extern const int INTER_TOUR_ITERATIONS;
+extern const int MIN_ANT;
+extern const int MAX_STAGNATION;
+extern const int NEAREST_NEIGHBOR_LIMIT;
+extern const int ALPHA_NEARNESS_LIMIT;
+extern const int RUN;
+extern const double CLOSEST_RATE;
 
-const int DP_PARTITION_COUNT = 100;
-const double DP_PERCENTAGE = 0.25;
+extern const int DP_PARTITION_COUNT;
+extern const double DP_PERCENTAGE;
 
 #endif

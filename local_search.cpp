@@ -450,7 +450,7 @@ void Ant::local_search(){
     inter_tour_optimization_del();
     intra_tour_optimization();
     for(int i = 0; i < LOCAL_SEARCH_ITERATIONS; i++){
-        for(int j = 0; j < INTER_TOUR_INTERATIONS; j++)
+        for(int j = 0; j < INTER_TOUR_ITERATIONS; j++)
             inter_tour_optimization();
 
         intra_tour_optimization();

@@ -22,6 +22,10 @@ static struct option long_options[] = {
     {0,         0,                 0,  0 }
 };
 
+vector<int> min_pop = {10, 15, 20};
+vector<int> max_pop = {25, 30, 25};
+vector<double> pop_arg = {1.15, 1.2, 1.25};
+
 
 int main(int argc, char **args){
     ios_base::sync_with_stdio(0); cin.tie(0);
@@ -117,17 +121,31 @@ int main(int argc, char **args){
 
     Graph graph;
     graph.load_data(dataset);
-    init(variation, graph, salesmen);
 
-    for(int i = 0; i < run; i++){
-        cout << "Run " << i + 1 << endl;
-        mTSPSolver solver(graph, salesmen, cutoff_time, cutoff_interation);
-        solver.solve();
-        write_result(solver.gbest, variation, graph, salesmen, i + 1);
+    Stat stat(variation, graph, salesmen);
+
+    for(auto &mn : min_pop){
+        for(auto &mx : max_pop){
+            for(auto &pop : pop_arg){
+                MIN_POPULATION_SIZE = mn;
+                MAX_POPULATION_SIZE = mx;
+                DIFFERENCE_COEFFICIENT = pop;
+                variation = "tuning_" + to_string(mn) + "_" + to_string(mx) + "_" + to_string(pop);
+                for(int i = 0; i < run; i++){
+                    cout << "Run " << i + 1 << endl;
+                    mTSPSolver solver(graph, salesmen, cutoff_time, cutoff_interation);
+                    solver.solve(stat);
+                    stat.write_result(solver.gbest, variation, graph, salesmen, i + 1);
+                }
+                stat.write_convergence(variation, graph, salesmen);
+                stat.write_result_complete(variation, graph, salesmen);
+            }
+        }
     }
 
-    write_convergence(variation, graph, salesmen);
-    write_result_complete(variation, graph, salesmen);
+    
+
+    
 
     return 0;
 }

@@ -3,18 +3,12 @@
 #include "graph.h"
 using namespace std;
 
-double worse, best = 1e18, avg;
-int cnt;
-vector<double> convergence;
-vector<int> ccnt;
 
-void init(string &variation, Graph &graph, int salesmen){
-    std::ofstream outputFile("result/" + graph.NAME + "_" + to_string(salesmen) + "_" + variation, std::ios::out);
-}
 
-void write_result(Ant &gbest, string &variation, Graph &graph, int salesmen, int run){
+
+void Stat::write_result(Ant &gbest, string &variation, Graph &graph, int salesmen, int run){
     cnt++;
-    worse = max(worse, gbest.min_max_cost);
+    worst = max(worst, gbest.min_max_cost);
     best = min(best, gbest.min_max_cost);
     avg += gbest.min_max_cost;
 
@@ -34,7 +28,7 @@ void write_result(Ant &gbest, string &variation, Graph &graph, int salesmen, int
     outputFile.close();
 }
 
-void add(int iter, double cost){
+void Stat::add(int iter, double cost){
     if(iter >= convergence.size()){
         convergence.push_back(0.);
         ccnt.push_back(0);
@@ -43,7 +37,7 @@ void add(int iter, double cost){
     ccnt[iter]++;
 }
 
-void write_convergence(string &variation, Graph &graph, int salesmen){
+void Stat::write_convergence(string &variation, Graph &graph, int salesmen){
     std::ofstream outputFile("convergence/" + graph.NAME + "_" + to_string(salesmen) + "_" + variation, std::ios::out);
 
     for(int i = 0; i < convergence.size(); i++){
@@ -53,10 +47,17 @@ void write_convergence(string &variation, Graph &graph, int salesmen){
     outputFile.close();
 }
 
-void write_result_complete(string &variation, Graph &graph, int salesmen){
+void Stat::write_result_complete(string &variation, Graph &graph, int salesmen){
     std::ofstream outputFile("result/" + graph.NAME + "_" + to_string(salesmen) + "_" + variation, std::ios::app);
+    std::ofstream tuningFile("tuning/" + graph.NAME + "_" + to_string(salesmen), std::ios::app);
     
     outputFile <<"Avg: " << avg / double(cnt) << endl;
     outputFile <<"Best: " << best << endl;
-    outputFile <<"Worse: " << worse << endl;
+    outputFile <<"worst: " << worst << endl;
+
+    tuningFile << variation << endl;
+    tuningFile <<"Avg: " << avg / double(cnt) << endl;
+    tuningFile <<"Best: " << best << endl;
+    tuningFile <<"worst: " << worst << endl;
+    tuningFile <<  endl;
 }

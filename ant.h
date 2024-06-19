@@ -59,7 +59,6 @@ struct Ant{
         min_sum_cost = 1e9;
     }
 
-
     Ant(int salesmen, vector<vector<double>> *distance, Graph *graph): graph(graph), distance(distance){
         tours = vector<_tour>(salesmen);
         for(int i = 0; i < salesmen; i++) del.insert(i);
@@ -67,6 +66,11 @@ struct Ant{
         position = vector<int>(graph -> n);
     }
     
+    ~Ant(){
+        delete graph;
+        delete distance;
+    }
+
     void retag(int index);
     int longest_tour_index();
     int shortest_tour_index();

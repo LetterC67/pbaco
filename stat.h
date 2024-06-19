@@ -7,10 +7,22 @@
 
 using namespace std;
 
-void init(string &variation, Graph &graph, int salesmen);
-void write_result(Ant &gbest, string &variation, Graph &graph, int salesmen, int run);
-void add(int iter, double cost);
-void write_convergence(string &variation, Graph &graph, int salesmen);
-void write_result_complete(string &variation, Graph &graph, int salesmen);
+struct Stat{
+    double worst, best, avg;
+    int cnt;
+    vector<double> convergence;
+    vector<int> ccnt;
+
+
+    Stat(string &variation, Graph &graph, int salesmen){
+        std::ofstream outputFile("result/" + graph.NAME + "_" + to_string(salesmen) + "_" + variation, std::ios::out);
+        best = 1e18;
+        worst = 0;
+    }
+    void write_result(Ant &gbest, string &variation, Graph &graph, int salesmen, int run);
+    void add(int iter, double cost);
+    void write_convergence(string &variation, Graph &graph, int salesmen);
+    void write_result_complete(string &variation, Graph &graph, int salesmen);
+};
 
 #endif

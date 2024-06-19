@@ -275,7 +275,7 @@ void Graph::init_closest(){
             return distance[i][a] < distance[i][b];
         });
 
-        while(closest[i].size() > NEAREST_NEIGHTBOR_LIMIT) closest[i].pop_back();
+        while(closest[i].size() > NEAREST_NEIGHBOR_LIMIT) closest[i].pop_back();
     }
 
     OneMinimumSpanningTree one_tree(0, n, ALPHA_NEARNESS_LIMIT, distance);
