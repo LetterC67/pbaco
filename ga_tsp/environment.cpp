@@ -69,9 +69,16 @@ void TEnvironment::doIt(){
 	this->init();
 
 	this->getEdgeFreq();
+
+	int no_improve = 0;
+	double last_iter = 0;
+
 	while( 1 ){
 		this->setAverageBest();
-		//printf( "%d:\t%f\t%lf\n", fCurNumOfGen, fBestValue, fAverageValue );
+		if(last_iter == fAverageValue) no_improve++;
+		last_iter = fAverageValue;
+		if(no_improve > 500) break;
+		///printf( "%d:\t%f\t%lf\n", fCurNumOfGen, fBestValue, fAverageValue );
 		if( this->terminationCondition() ) break;
 
 		this->selectForMating();

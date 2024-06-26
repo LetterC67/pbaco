@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+import sys
+sys.stdin = open("temp", "r")
 
 def read_city_coordinates(filename):
     """
@@ -17,6 +19,8 @@ def read_city_coordinates(filename):
             data = line.strip().split()
             if not data[0].isnumeric():
                 continue
+            if(int(data[0]) < 10):
+                print(data[0])
             city_name = int(data[0]) - 1
             x = float(data[1])
             y = float(data[2])
@@ -38,7 +42,7 @@ def plot_salesmen_tours(city_coordinates, salesmen_tours):
         x = [city_coordinates[int(city)][0] for city in tour]
         y = [city_coordinates[int(city)][1] for city in tour]
         plt.plot(x + [x[0]], y + [y[0]], linestyle='-', marker='o', color=colors[i % len(colors)], label=f'Salesman {i+1}')
-
+        print(len(x))
     plt.xlabel('X')
     plt.ylabel('Y')
     plt.title('MTSP: Tours of Salesmen')

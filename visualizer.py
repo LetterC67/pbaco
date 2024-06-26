@@ -25,7 +25,7 @@ def read(file_path):
         for line in file:
             # Strip any leading/trailing whitespace (including newlines)
             line = line.strip().split()[1]
-            numbers.append(double(line))
+            numbers.append(float(line))
 
     print(numbers)
     return numbers
@@ -33,7 +33,8 @@ def read(file_path):
 
 # Create the plot
 plt.figure(figsize=(10, 6))
-datasets = [ 'convergence/u2152_5_', 'convergence/u2152_5_random2']
+datasets = [ 'convergence/pr2392_5_tuning_10_100_1.150000', 'convergence/pr2392_5_tuning_10_100_1.200000', 'convergence/pr2392_5_tuning_10_100_1.250000', 'convergence/pr2392_5_tuning_15_100_1.150000', 'convergence/pr2392_5_tuning_15_100_1.200000', 'convergence/pr2392_5_tuning_15_100_1.250000', 'convergence/pr2392_5_tuning_20_100_1.150000', 'convergence/pr2392_5_tuning_20_100_1.200000', 'convergence/pr2392_5_tuning_20_100_1.250000'
+]
 
 # Generate and plot each dataset
 for dataset in datasets:

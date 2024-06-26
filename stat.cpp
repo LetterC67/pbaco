@@ -54,10 +54,4 @@ void Stat::write_result_complete(string &variation, Graph &graph, int salesmen){
     outputFile <<"Avg: " << avg / double(cnt) << endl;
     outputFile <<"Best: " << best << endl;
     outputFile <<"worst: " << worst << endl;
-
-    tuningFile << variation << endl;
-    tuningFile <<"Avg: " << avg / double(cnt) << endl;
-    tuningFile <<"Best: " << best << endl;
-    tuningFile <<"worst: " << worst << endl;
-    tuningFile <<  endl;
 }

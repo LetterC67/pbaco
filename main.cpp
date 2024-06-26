@@ -19,6 +19,11 @@ static struct option long_options[] = {
     {"thread", optional_argument, 0, 't'},
     {"variation", optional_argument, 0, 'v'},
     {"run", optional_argument, 0, 'r'},
+    {"beta", optional_argument, 0, 'b'},
+    {"pop", optional_argument, 0, 'p'},
+    {"pop_size", optional_argument, 0, 'z'},
+    {"ratio", optional_argument, 0, 'o'},
+    {"rho", optional_argument, 0, 'x'},
     {0,         0,                 0,  0 }
 };
 
@@ -42,7 +47,7 @@ int main(int argc, char **args){
     int run = 30;
 
     while (1) {
-        c = getopt_long(argc, args, "hd:s:c:i:t:v:r:", long_options, &option_index);
+        c = getopt_long(argc, args, "hd:s:c:i:t:v:r:b:p:z:o:x:", long_options, &option_index);
 
         if (c == -1)
             break;
@@ -96,6 +101,23 @@ int main(int argc, char **args){
                 fprintf(stderr, "Unknown option: -%c\n", optopt);
                 break;
 
+            case 'b':
+                BETA = stoi(optarg);
+                break;
+
+            case 'p':
+                DIFFERENCE_COEFFICIENT = stod(optarg);
+                break;
+            
+            case 'z':
+                MIN_POPULATION_SIZE = stoi(optarg);
+                break;
+
+            case 'o':
+                RATIO = stod(optarg);
+                break;
+            
+
             case ':':
                 fprintf(stderr, "Option -%c requires an argument.\n", optopt);
 
@@ -116,35 +138,24 @@ int main(int argc, char **args){
     omp_set_num_threads(threads);
 
 
-    system("mkdir convergence");
-    system("mkdir result");
+    // system("mkdir convergence");
+    // system("mkdir result");
 
     Graph graph;
     graph.load_data(dataset);
 
+    Stat stat(variation, graph, salesmen);
 
-    for(auto &mn : min_pop){
-        for(auto &mx : max_pop){
-            for(auto &pop : pop_arg){
-                MIN_POPULATION_SIZE = mn;
-                MAX_POPULATION_SIZE = mx;
-                DIFFERENCE_COEFFICIENT = pop;
-                variation = "tuning_" + to_string(mn) + "_" + to_string(mx) + "_" + to_string(pop);
-                Stat stat(variation, graph, salesmen);
-                for(int i = 0; i < run; i++){
-                    cout << "Run " << i + 1 << endl;
-                    mTSPSolver solver(graph, salesmen, cutoff_time, cutoff_interation);
-                    solver.solve(stat);
-                    stat.write_result(solver.gbest, variation, graph, salesmen, i + 1);
-                }
-                stat.write_convergence(variation, graph, salesmen);
-                stat.write_result_complete(variation, graph, salesmen);
-            }
-        }
+    for(int i = 0; i < run; i++){
+        mTSPSolver solver(graph, salesmen, cutoff_time, cutoff_interation);
+        solver.solve(stat);
+        stat.write_result(solver.gbest, variation, graph, salesmen, i + 1);
     }
+    stat.write_convergence(variation, graph, salesmen);
+    stat.write_result_complete(variation, graph, salesmen);
 
     
-
+    cout << fixed << setprecision(6) << stat.avg / run;
     
 
     return 0;

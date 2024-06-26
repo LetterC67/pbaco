@@ -127,7 +127,7 @@ struct OneMinimumSpanningTree {
         vector<double> w(numNodes, 0);
         double W = -1e18;
         double step_size = 1;
-        int period = numNodes / 2;
+        int period = numNodes / 4;
         int iter = period;
         bool isFirstPeriodIncreasing = true;
         vector<int> prev_v(numNodes, 0);
@@ -174,7 +174,7 @@ struct OneMinimumSpanningTree {
                 if (increase){
                     iter = period;
                 } else{
-                    period /= 2;
+                    period /= 4;
                     step_size /= 2;
                     iter = period;
                 }
@@ -278,11 +278,16 @@ void Graph::init_closest(){
         while(closest[i].size() > NEAREST_NEIGHBOR_LIMIT) closest[i].pop_back();
     }
 
-    OneMinimumSpanningTree one_tree(0, n, ALPHA_NEARNESS_LIMIT, distance);
-    auto _closest = one_tree.computeCandidateSet();
+    OneMinimumSpanningTree one_tree(0, n, n - 1, distance);
+    _closest = one_tree.computeCandidateSet();
+    auto __closest = _closest;
+
+    for(auto &c : __closest){
+        while(c.size() > ALPHA_NEARNESS_LIMIT) c.pop_back();
+    }
 
     for(int i = 0; i < n; i++){
-        closest[i].insert(closest[i].end(), _closest[i].begin(), _closest[i].end());
+        closest[i].insert(closest[i].end(), __closest[i].begin(), __closest[i].end());
         sort(closest[i].begin(), closest[i].end());
         closest[i].erase(unique(closest[i].begin(), closest[i].end()), closest[i].end());
     }
@@ -313,7 +318,6 @@ void Graph::load_data(const string &file){
     ifs >> nil;
 
     closest = vector<vector<int>>(n);
-    s_closest = vector<unordered_set<int>>(n);
 
     x.resize(n);
     y.resize(n);

@@ -17,7 +17,7 @@ struct mTSPSolver{
     int salesmen;
     int iteration = 1;
     int no_improve = 0;
-    double TAU_MIN;
+    double TAU_MIN, TAU_MID;
 
     int cutoff_time, cutoff_iteration;
 
@@ -29,6 +29,7 @@ struct mTSPSolver{
     mTSPSolver(Graph &graph, int salesmen, int cutoff_time, int cutoff_iteration): graph(graph), salesmen(salesmen), cutoff_iteration(cutoff_iteration), cutoff_time(cutoff_time){
         n = graph.n;
         TAU_MIN = 1 / (double(n * n) / RATIO);
+        TAU_MID = 1 / (n * RATIO);
         pheromone.resize(n);
         for(auto &p : pheromone)
             p = vector<double>(n, TAU_MAX);

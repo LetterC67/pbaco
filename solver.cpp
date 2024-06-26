@@ -21,11 +21,16 @@ pair<int, int> mTSPSolver::select_city(Ant &ant, vector<bool> &visited){
     int current_city = ant.tours[salesman].back();
 
     vector<int> candidate;
-    for(int city = 0; city < n; city++){
+    int bound = min(N_NEAREST, (int)ant.graph -> _closest[current_city].size());
+    for(int i = 0; i < bound; i++){
+        int city = ant.graph -> _closest[current_city][i];
         if(!visited[city]){
             double prob = pheromone[current_city][city] * 1. / powl(graph.distance[current_city][city], BETA);
             wheel.add(prob);
             candidate.push_back(city);
+        }
+        if(i == bound - 1 && !candidate.size()){
+            bound = ant.graph -> _closest[current_city].size();
         }
     }
 
@@ -68,9 +73,9 @@ vector<Ant> mTSPSolver::build_solutions(){
         Ant a;
         if(!population.population.size())
             a = build_solution(Ant(salesmen, &graph.distance, &graph));
-        else
+        else{
             a = build_solution(trim(population.get()));
-
+        }
         #pragma omp critical
         {
             ants.push_back(a);
@@ -89,11 +94,18 @@ void mTSPSolver::update_pheromone(){
         }
     }
 
+    // for(auto &ant : population.population)
+    //     for(auto &tour : ant.tours){
+    //         for(int i = 0; i < tour.size() - 1; i++){
+    //             pheromone[tour[i]][tour[i + 1]] = p[tour[i]][tour[i + 1]] * (1 - RHO) + TAU_MID * RHO;
+    //         }
+    //     }
     for(auto &tour : gbest.tours){
         for(int i = 0; i < tour.size() - 1; i++){
             pheromone[tour[i]][tour[i + 1]] = p[tour[i]][tour[i + 1]] * (1 - RHO) + TAU_MAX * RHO;
         }
     }
+
 }
 
 void mTSPSolver::solve(Stat &stat){
@@ -107,12 +119,18 @@ void mTSPSolver::solve(Stat &stat){
         auto ants = build_solutions();
         Ant ibest;
 
-
         for(auto &ant : ants){
             population.add(ant);
-            if(gbest.min_max_cost - 1e-4 > ant.min_max_cost || (abs(gbest.min_max_cost - ant.min_max_cost) < 1e-4 && gbest.sqrt_cost - 1e-4 > ant.sqrt_cost)){
-                ant.run_tsp();
+            if(gbest.min_max_cost - 1e-3 > ant.min_max_cost || (abs(gbest.min_max_cost - ant.min_max_cost) < 1e-3 && gbest.sqrt_cost - 1e-3 > ant.sqrt_cost)){
+               // cout <<"run"<<endl;
+                if(iteration > RUN_TSP_THRESHOLD){
+                    ant.run_tsp();
+                    ant.local_search();
+                    ant.calculate_result();
+                }
+                //cout << "done" << endl;
                 gbest = ant;
+                //population.population = {gbest};
                 no_improve = 0;
             }
 
@@ -120,11 +138,17 @@ void mTSPSolver::solve(Stat &stat){
                 ibest = ant;
             }
         }
+
+        if(iteration == RUN_TSP_THRESHOLD){
+            gbest.run_tsp();
+        }
+
         no_improve++;
 
         update_pheromone();
 
-        population.kill();
+        if(population.population.size() > MAX_POPULATION_SIZE)
+            population.kill();
         if(no_improve > MAX_STAGNATION){
             
         }
@@ -148,7 +172,7 @@ void mTSPSolver::solve(Stat &stat){
         double iteration_time = chrono::duration_cast<chrono::nanoseconds>(end_itertation - start_iteration).count();
         iteration_time *= 1e-9;
 
-        cout << "Iteration " << iteration << ' ' << gbest.min_max_cost << ' ' << ibest.min_max_cost << ' ' << no_improve << ' ' << iteration_time << endl;
+         cout << "Iteration " << iteration << ' ' << gbest.min_max_cost << ' ' << ibest.min_max_cost << ' ' << no_improve << ' ' << iteration_time << endl;
 
         double program_time = chrono::duration_cast<chrono::nanoseconds>(end_itertation - start_time).count();
         program_time *= 1e-9;
@@ -166,5 +190,5 @@ void mTSPSolver::solve(Stat &stat){
         gbest.verify(n);
     }
 
-    cout << "Result: " << gbest.min_max_cost << endl;
+    cout << gbest.min_max_cost << endl;
 }

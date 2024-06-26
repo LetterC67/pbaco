@@ -75,22 +75,24 @@ struct Ant{
     void add(int salesman, int vertex);
     void add(_tour &tour, int vertex);
     
-    bool swap(_tour &a, _tour &b, int idx_b);
+    bool swap(_tour &a, _tour &b,int idx_b);
     bool relocate(_tour &a, _tour &b, int idx_a, int idx_b);
     bool swap_tail(_tour &a, _tour &b, int idx_a, int idx_b);
 
     bool two_opt_sweepline(_tour &tour, int idx);
-    void two_opt(_tour &tour);
-    void or_opt(_tour &tour, int idx);
-    void or_opt(_tour &tour);
+    bool two_opt(_tour &tour);
+    bool or_opt(_tour &tour, int idx);
+    bool or_opt(_tour &tour);
     void run_dp(_tour &x, _tour &y);
     void run_tsp();
     void dp();
     void verify(int n);
 
-    void intra_tour_optimization();
+    bool intra_tour_optimization();
     void inter_tour_optimization();
+    bool intra_tour_optimization_del();
     void inter_tour_optimization_del();
+
     void local_search();
     void end_tour();
     void calculate_result();

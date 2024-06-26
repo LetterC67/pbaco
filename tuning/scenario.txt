@@ -1,0 +1,6 @@
+execDir = "."
+targetRunner = "./target_runner.R"
+maxExperiments = 180
+logFile = "./irace.log"
+trainInstancesDir = ""
+trainInstancesFile = "instances.txt"
