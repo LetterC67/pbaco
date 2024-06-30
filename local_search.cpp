@@ -178,8 +178,9 @@ bool Ant::swap_tail(_tour &a, _tour &b, int idx_a, int idx_b){
         
             double dak = (*distance)[a[i - 1]][b[j]] + (*distance)[b[j - 1]][a[i]];
             double mim = (*distance)[a[i - 1]][b[j - 1]]  + (*distance)[a[i]][b[j]];
+            double lmao = (*distance)[a[i - 1]][a[i]]  + (*distance)[b[j - 1]][b[j]];
 
-            if(dak < mim && max(new_cost_a, new_cost_b) + 1e-4 < max(a.cost, b.cost)){
+            if(max(new_cost_a, new_cost_b) + 1e-4 < max(a.cost, b.cost)){
                 if(max(new_cost_a, new_cost_b) < min_cost){
                     min_cost = max(new_cost_a, new_cost_b);
                     ii = i;
@@ -191,7 +192,7 @@ bool Ant::swap_tail(_tour &a, _tour &b, int idx_a, int idx_b){
             new_cost_a = pref_a[i - 1] + pref_b[j - 1] + (*distance)[a[i - 1]][b[j - 1]];
             new_cost_b = suf_a[i] + suf_b[j] + (*distance)[a[i]][b[j]];
 
-            if(mim < dak && max(new_cost_a, new_cost_b) + 1e-4 < max(a.cost, b.cost)){
+            if(max(new_cost_a, new_cost_b) + 1e-4 < max(a.cost, b.cost)){
                 if(max(new_cost_a, new_cost_b) < min_cost){
                     min_cost = max(new_cost_a, new_cost_b);
                     ii = i;
@@ -292,7 +293,8 @@ bool Ant::two_opt_sweepline(_tour &tour, int idx){
         return a.type < b.type;
     });
 
-    bool used = false;
+    double min_cost = 1e9;
+    int l = -1, r = -1;
 
     for(auto &e : event){
         if(e.type){
@@ -308,12 +310,11 @@ bool Ant::two_opt_sweepline(_tour &tour, int idx){
                 if(aa > c) std::swap(aa, c), std::swap(bb, d);
                 
                 double delta = get_delta(aa, bb, c, d, tour, distance);
-                if(delta < 0){
-                    tour.cost += delta;
-                    reverse(tour.begin() + bb, tour.begin() + c + 1);
-                    retag(idx);
-                    used = true;
-                    break;
+                if(delta < -1e-4){
+                    if(delta < min_cost){
+                        min_cost = delta;
+                        l = bb, r = c;
+                    }
                 }
             }
             current.insert(e.index);
@@ -321,8 +322,14 @@ bool Ant::two_opt_sweepline(_tour &tour, int idx){
             current.erase(e.index);
         }
     }
+
+    if(l == -1) return false;
+    double delta = get_delta(l - 1, l, r, r + 1, tour, distance);
+    reverse(tour.begin() + l, tour.begin() + r + 1);
+    tour.cost += delta;
+    retag(idx);
     
-    return used;
+    return true;
 }
 
 bool Ant::two_opt(_tour &tour){
@@ -412,6 +419,7 @@ int Ant::shortest_tour_index(){
 }
 
 
+
 bool Ant::intra_tour_optimization(){
     int idx = 0;
     bool improved = false;
@@ -419,9 +427,11 @@ bool Ant::intra_tour_optimization(){
         // two_opt_sweepline(tour, idx);
         // two_opt_sweepline(tour, idx);
         // two_opt_sweepline(tour, idx);
-        if(tour.size() > 500) improved |= two_opt_sweepline(tour, idx);
-        else improved |= two_opt(tour);
-        if(tour.size() > 500)
+        if(tour.size() > 300){
+            if(two_opt_sweepline(tour, idx)) improved = true;
+        }
+        else if(two_opt(tour)) improved = true;
+        if(tour.size() > 300)
         improved |= or_opt(tour, idx);
         else improved |=  or_opt(tour);
         idx++;
@@ -437,9 +447,11 @@ bool Ant::intra_tour_optimization_del(){
 
     for(auto &idx : del){
         auto &tour = tours[idx];
-        if(tour.size() > 500) improved |= two_opt_sweepline(tour, idx);
-        else improved |= two_opt(tour);
-        if(tour.size() > 500)
+        if(tour.size() > 300){
+            if(two_opt_sweepline(tour, idx)) improved = true;
+        }
+        else if(two_opt(tour)) improved = true;
+        if(tour.size() > 300)
         improved |= or_opt(tour, idx);
         else improved |= or_opt(tour);
     }
@@ -492,17 +504,12 @@ void Ant::inter_tour_optimization(){
         if(tour != i)
             while(relocate(tours[ord[i]], tours[ord[tour]], ord[i], ord[tour])){}
     }
-    for(int i = 0; i < tours.size(); i++){
-        for(int tour = 0; tour < tours.size(); tour++)
-        if(tour != i)
-            while(swap(tours[ord[i]], tours[ord[tour]], ord[tour])){}
-    }
+    // for(int i = 0; i < tours.size(); i++){
+    //     for(int tour = 0; tour < tours.size(); tour++)
+    //     if(tour != i)
+    //         while(swap(tours[ord[i]], tours[ord[tour]], ord[tour])){}
+    // }
 
-    for(int i = 0; i < tours.size(); i++){
-        for(int tour = 0; tour < tours.size(); tour++)
-        if(tour != i)
-            loop |= swap_tail(tours[ord[i]], tours[ord[tour]], ord[i], ord[tour]); 
-    }
     for(int i = 0; i < tours.size(); i++){
         for(int tour = 0; tour < tours.size(); tour++)
         if(tour != i)
@@ -512,44 +519,68 @@ void Ant::inter_tour_optimization(){
 
 
 void Ant::local_search(){
-    // for(int i = 0; i < 2; i++){
-    //     inter_tour_optimization_del();
-    // }
-    
-    //intra_tour_optimization_del();    
-    vector<int> can(del.begin(),del.end());
+    // intra_tour_optimization_del();    
+    // vector<int> can(del.begin(),del.end());
 
-    for(int i = 0; i < 3; i++){
-        bool improved = false;
-        shuffle(can.begin(), can.end(), rng);
+    // for(int i = 0; i < 3; i++){
+    //     bool improved = false;
+    //     shuffle(can.begin(), can.end(), rng);
         
-        if(i == 0){
-            for(int i = 0; i < can.size(); i++){
-                for(int j = 0; j < can.size(); j++){
-                    if(i != j)
-                        while(relocate(tours[can[i]], tours[can[j]], can[i], can[j])){
-                            improved = true;
-                        }
-                }
-            }
-        }else if(i == 1){
-            for(int i = 0; i < can.size(); i++){
-                for(int j = 0; j < can.size(); j++){
-                    if(i != j)
-                        improved |= swap_tail(tours[can[i]], tours[can[j]], can[i], can[j]);
-                }
-            }
-        }else{
-            improved |= intra_tour_optimization_del();
-        }
+    //     if(i == 0){
+    //         for(int i = 0; i < can.size(); i++){
+    //             for(int j = 0; j < can.size(); j++){
+    //                 if(i != j)
+    //                     if(relocate(tours[can[i]], tours[can[j]], can[i], can[j])){
+    //                         improved = true;
+    //                     }
+    //             }
+    //         }
+    //     }else if(i == 1){
+    //         for(int i = 0; i < can.size(); i++){
+    //             for(int j = 0; j < can.size(); j++){
+    //                 if(i != j)
+    //                     improved |= swap_tail(tours[can[i]], tours[can[j]], can[i], can[j]);
+    //             }
+    //         }
+    //     }else{
+    //         improved |= intra_tour_optimization_del();
+    //     }
 
-        if(improved) i = -1;
-    }
+    //     if(improved) i = -1;
+    // }
 
+    //     vector<int> ord;
+    
+    // for(int i = 0; i < tours.size(); i++)
+    //     ord.push_back(i);
+
+    // while(1){
+    //     bool improved = false;
+    //     shuffle(ord.begin(), ord.end(), rng);
+
+    //     for(int i = 0; i < tours.size(); i++){
+    //         for(int tour = 0; tour < tours.size(); tour++)
+    //             if(tour != i)
+    //                 while(relocate(tours[ord[i]], tours[ord[tour]], ord[i], ord[tour])){
+    //                     improved = true;
+    //                 }
+    //     }
+
+    //     for(int i = 0; i < tours.size(); i++){
+    //         for(int tour = 0; tour < tours.size(); tour++)
+    //         if(tour != i)
+    //             improved |= swap_tail(tours[ord[i]], tours[ord[tour]], ord[i], ord[tour]); 
+    //     }
+
+    //     improved |= intra_tour_optimization();
+
+    //     if(!improved) break;
+    // }
     vector<int> ord;
     
     for(int i = 0; i < tours.size(); i++)
         ord.push_back(i);
+
     
     for(int i = 0; i < 3; i++){
         bool improved = false;
@@ -559,7 +590,7 @@ void Ant::local_search(){
             for(int i = 0; i < tours.size(); i++){
                 for(int tour = 0; tour < tours.size(); tour++)
                     if(tour != i)
-                        while(relocate(tours[ord[i]], tours[ord[tour]], ord[i], ord[tour])){
+                        if(relocate(tours[ord[i]], tours[ord[tour]], ord[i], ord[tour])){
                             improved = true;
                         }
             }

@@ -54,6 +54,16 @@ double Ant::tour_distance(_tour& a, _tour &b){
     return x / double(a.size() - 2) / double(b.size() - 2);
 }
 
+int count_similar(unordered_set<int> edges, vector<int> &tour, int n){
+    int ans = 0;
+
+    for(int i = 0; i < tour.size() - 1; i++){
+        ans += edges.count(tour[i] * n + tour[i + 1]);
+    }
+
+    return ans;
+}
+
 void Ant::run_tsp(){
     for(auto &tour : tours){
         if(tour.size() <= 80) continue;
@@ -83,6 +93,19 @@ void Ant::run_tsp(){
             }   
         
             temp.push_back(0);
+
+            unordered_set<int> edges;
+
+            for(int i = 0; i < tour.size(); i++){
+                edges.insert(tour[i] * (*distance).size() + tour[i + 1]);
+            }
+
+            int no_rev = count_similar(edges, temp, (*distance).size());
+            reverse(temp.begin(), temp.end());
+            int rev = count_similar(edges, temp, (*distance).size());
+
+            if(no_rev > rev)
+                reverse(temp.begin(), temp.end());
 
             tour.tour = temp;
         }

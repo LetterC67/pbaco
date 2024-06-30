@@ -130,7 +130,6 @@ void mTSPSolver::solve(Stat &stat){
                 }
                 //cout << "done" << endl;
                 gbest = ant;
-                //population.population = {gbest};
                 no_improve = 0;
             }
 
@@ -141,13 +140,15 @@ void mTSPSolver::solve(Stat &stat){
 
         if(iteration == RUN_TSP_THRESHOLD){
             gbest.run_tsp();
+            gbest.local_search();
+            gbest.calculate_result();
         }
 
         no_improve++;
 
         update_pheromone();
 
-        if(population.population.size() > MAX_POPULATION_SIZE)
+        if(population.population.size() > MIN_POPULATION_SIZE)
             population.kill();
         if(no_improve > MAX_STAGNATION){
             
