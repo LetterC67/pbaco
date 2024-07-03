@@ -131,28 +131,28 @@ Ant trim(Ant ant){
         for(int j = i + 1; j < salesmen; j++)
             dis[i][j] = dis[j][i] = ant.tour_distance(ant.tours[i], ant.tours[j]);
 
-    // vector<int> v;
-    // for(int i = 0; i < salesmen; i++)
-    //     if(!del_list.count(i))
-    //         v.push_back(i);
+    vector<int> v;
+    for(int i = 0; i < salesmen; i++)
+        if(!del_list.count(i))
+            v.push_back(i);
 
-    // shuffle(v.begin(), v.end(), rng);
+    shuffle(v.begin(), v.end(), rng);
 
-    // for(int i = 0; i < del_count; i++)
-    //     del_list.insert(v[i]);
+    for(int i = 0; i < del_count; i++)
+        del_list.insert(v[i]);
 
-    while(del_count--){
-        int next_del = 0;
-        double d = 1e9;
+    // while(del_count--){
+    //     int next_del = 0;
+    //     double d = 1e9;
 
-        for(int i = 0; i < salesmen; i++){
-            if(!del_list.count(i) && dis[last_del][i] < d){
-                d = dis[last_del][i];
-                next_del = i;
-            }
-        }
-        del_list.insert(next_del);
-    }
+    //     for(int i = 0; i < salesmen; i++){
+    //         if(!del_list.count(i) && dis[last_del][i] < d){
+    //             d = dis[last_del][i];
+    //             next_del = i;
+    //         }
+    //     }
+    //     del_list.insert(next_del);
+    // }
 
     for(int i = 0; i < ant.tours.size(); i++){
         if(del_list.count(i)){
