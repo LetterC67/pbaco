@@ -350,6 +350,8 @@ bool Ant::two_opt(_tour &tour){
 
 bool Ant::or_opt(_tour &tour, int idx){
     bool improved = false;
+    int _i = -1, _j = -1, _opt_size = -1;
+    double best = 1e9;
 
     for(int opt_size = 1; opt_size <= OPT_SIZE; opt_size++){
         for(int i = 1; i < (int)tour.size() - opt_size ; i++){
@@ -361,15 +363,27 @@ bool Ant::or_opt(_tour &tour, int idx){
                     - (*distance)[tour[j]][tour[j + 1]] - (*distance)[tour[i - 1]][tour[i]] - (*distance)[tour[i + opt_size - 1]][tour[i + opt_size]];
 
                 if(delta <-1e-4){
-                    move_segment(tour.tour, i, i + opt_size - 1, j);
-                    tour.cost += delta;
-                    improved = true;
+                    if(delta < best){
+                        best = delta;
+                        _i = i;
+                        _j = j;
+                        _opt_size = opt_size;
+                    }
+                    
                 }
             }
         }
     }
 
-    return improved;
+    if(_i == -1) return false;
+    int i = _i, j = _j, opt_size = _opt_size;
+    double delta = (*distance)[tour[j]][tour[i]] + (*distance)[tour[i + opt_size - 1]][tour[j + 1]] + (*distance)[tour[i - 1]][tour[i + opt_size]]
+                    - (*distance)[tour[j]][tour[j + 1]] - (*distance)[tour[i - 1]][tour[i]] - (*distance)[tour[i + opt_size - 1]][tour[i + opt_size]];
+
+    move_segment(tour.tour, i, i + opt_size - 1, j);
+    tour.cost += delta;
+
+    return true;
 }
 
 bool Ant::or_opt(_tour &tour){
