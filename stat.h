@@ -15,6 +15,7 @@ struct Stat{
 
 
     Stat(string &variation, Graph &graph, int salesmen){
+        cnt = 0;
         std::ofstream outputFile("result/" + graph.NAME + "_" + to_string(salesmen) + "_" + variation, std::ios::out);
         best = 1e18;
         worst = 0;

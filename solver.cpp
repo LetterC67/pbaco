@@ -66,7 +66,6 @@ Ant mTSPSolver::build_solution(Ant ant){
 
 vector<Ant> mTSPSolver::build_solutions(){
     vector<Ant> ants;
-    //const int ANTS = max(MIN_ANT, (int)(ANTS_MULTIPLIER * n));
 
     #pragma omp parallel for
     for(int ant = 0; ant < ANTS; ant++){
@@ -122,13 +121,11 @@ void mTSPSolver::solve(Stat &stat){
         for(auto &ant : ants){
             population.add(ant);
             if(gbest.min_max_cost - 1e-3 > ant.min_max_cost || (abs(gbest.min_max_cost - ant.min_max_cost) < 1e-3 && gbest.sqrt_cost - 1e-3 > ant.sqrt_cost)){
-               // cout <<"run"<<endl;
                 if(iteration > RUN_TSP_THRESHOLD){
                     ant.run_tsp();
                     ant.local_search();
                     ant.calculate_result();
                 }
-                //cout << "done" << endl;
                 gbest = ant;
                 no_improve = 0;
             }
@@ -155,19 +152,6 @@ void mTSPSolver::solve(Stat &stat){
         }
 
         stat.add(iteration - 1, gbest.min_max_cost);
-
-        // if(iteration % 10 == 0){
-        //     for(auto &tour : gbest.tours){
-        //         for(int &d : tour){
-        //             cout << d << ' ';
-        //         }
-        //         cout << endl;
-        //     }
-
-        //     for(auto &p : population.population){
-        //         cout << p.min_max_cost << endl;
-        //     }
-        // }
 
         auto end_itertation = chrono::high_resolution_clock::now();
         double iteration_time = chrono::duration_cast<chrono::nanoseconds>(end_itertation - start_iteration).count();
