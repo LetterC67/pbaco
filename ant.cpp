@@ -44,16 +44,6 @@ void Ant::calculate_result(){
     sqrt_cost = sqrt(sqrt_cost);
 }
 
-double Ant::tour_distance(_tour& a, _tour &b){
-    double x = 0;
-    for(int i = 1; i < a.size() - 1; i++){
-        for(int j = 1; j < b.size() - 1; j++){
-            x += (*distance)[a[i]][b[j]];
-        }
-    }
-    return x / double(a.size() - 2) / double(b.size() - 2);
-}
-
 int count_similar(unordered_set<int> edges, vector<int> &tour, int n){
     int ans = 0;
 
@@ -122,14 +112,8 @@ void Ant::run_tsp(){
 Ant trim(Ant ant){
     int salesmen = ant.tours.size();
             
-    int del_count = rng() % ((salesmen + 1) / 2);
-    int last_del = rng() % salesmen;
-    unordered_set<int> del_list = {last_del};
-
-    vector<vector<int>> dis(salesmen, vector<int>(salesmen));
-    for(int i = last_del; i <= last_del; i++)
-        for(int j = i + 1; j < salesmen; j++)
-            dis[i][j] = dis[j][i] = ant.tour_distance(ant.tours[i], ant.tours[j]);
+    int del_count = rng() % ((salesmen + 1) / 2) + 1;
+    unordered_set<int> del_list;
 
     vector<int> v;
     for(int i = 0; i < salesmen; i++)
@@ -140,19 +124,6 @@ Ant trim(Ant ant){
 
     for(int i = 0; i < del_count; i++)
         del_list.insert(v[i]);
-
-    // while(del_count--){
-    //     int next_del = 0;
-    //     double d = 1e9;
-
-    //     for(int i = 0; i < salesmen; i++){
-    //         if(!del_list.count(i) && dis[last_del][i] < d){
-    //             d = dis[last_del][i];
-    //             next_del = i;
-    //         }
-    //     }
-    //     del_list.insert(next_del);
-    // }
 
     for(int i = 0; i < ant.tours.size(); i++){
         if(del_list.count(i)){

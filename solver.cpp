@@ -93,12 +93,6 @@ void mTSPSolver::update_pheromone(){
         }
     }
 
-    // for(auto &ant : population.population)
-    //     for(auto &tour : ant.tours){
-    //         for(int i = 0; i < tour.size() - 1; i++){
-    //             pheromone[tour[i]][tour[i + 1]] = p[tour[i]][tour[i + 1]] * (1 - RHO) + TAU_MID * RHO;
-    //         }
-    //     }
     for(auto &tour : gbest.tours){
         for(int i = 0; i < tour.size() - 1; i++){
             pheromone[tour[i]][tour[i + 1]] = p[tour[i]][tour[i + 1]] * (1 - RHO) + TAU_MAX * RHO;
@@ -120,7 +114,7 @@ void mTSPSolver::solve(Stat &stat){
 
         for(auto &ant : ants){
             population.add(ant);
-            if(gbest.min_max_cost - 1e-3 > ant.min_max_cost || (abs(gbest.min_max_cost - ant.min_max_cost) < 1e-3 && gbest.sqrt_cost - 1e-3 > ant.sqrt_cost)){
+            if(ant < gbest){
                 if(iteration > RUN_TSP_THRESHOLD){
                     ant.run_tsp();
                     ant.local_search();
@@ -130,7 +124,7 @@ void mTSPSolver::solve(Stat &stat){
                 no_improve = 0;
             }
 
-            if(ibest.min_max_cost - 1e-4 > ant.min_max_cost || (abs(ibest.min_max_cost - ant.min_max_cost) < 1e-4 && ibest.sqrt_cost - 1e-4 > ant.sqrt_cost)){
+            if(ant < ibest){
                 ibest = ant;
             }
         }
@@ -140,16 +134,11 @@ void mTSPSolver::solve(Stat &stat){
             gbest.local_search();
             gbest.calculate_result();
         }
-
-        no_improve++;
-
+        
         update_pheromone();
 
         if(population.population.size() > MIN_POPULATION_SIZE)
             population.kill();
-        if(no_improve > MAX_STAGNATION){
-            
-        }
 
         stat.add(iteration - 1, gbest.min_max_cost);
 

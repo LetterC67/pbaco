@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
 #include "utils.h"
+#include "ant.h"
+
 using namespace std;
 
 void RouletteWheel::add(double probability){
@@ -23,4 +25,20 @@ int RouletteWheel::spin(){
     }
 
     return probabilities.size() - 1;
+}
+
+double Ant::tour_length(_tour &tour){
+    double cost = 0;
+    for(int i = 0; i < tour.size() - 1; i++){
+        cost += (*distance)[tour[i]][tour[i + 1]];
+    }
+    return cost;
+}
+
+int Ant::longest_tour_index(){
+    return max_element(tours.begin(), tours.end()) - tours.begin();
+}
+
+int Ant::shortest_tour_index(){
+    return min_element(tours.begin(), tours.end()) - tours.begin();
 }

@@ -33,7 +33,7 @@ def read(file_path):
 
 # Create the plot
 plt.figure(figsize=(10, 6))
-datasets = [ 'convergence/pr2392_5_tuning_10_100_1.150000', 'convergence/pr2392_5_tuning_10_100_1.200000', 'convergence/pr2392_5_tuning_10_100_1.250000', 'convergence/pr2392_5_tuning_15_100_1.150000', 'convergence/pr2392_5_tuning_15_100_1.200000', 'convergence/pr2392_5_tuning_15_100_1.250000', 'convergence/pr2392_5_tuning_20_100_1.150000', 'convergence/pr2392_5_tuning_20_100_1.200000', 'convergence/pr2392_5_tuning_20_100_1.250000'
+datasets = [ 'convergence/pcb3038_5_', 'convergence/pcb3038_5_opt5'
 ]
 
 # Generate and plot each dataset

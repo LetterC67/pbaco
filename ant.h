@@ -42,6 +42,14 @@ struct _tour{
     int size(){
         return tour.size();
     }
+
+    friend bool operator<(const _tour& lhs, const _tour& rhs) {
+        return lhs.cost < rhs.cost;
+    }
+
+    friend bool operator>(const _tour& lhs, const _tour& rhs) {
+        return lhs.cost > rhs.cost;
+    }
 };
 
 struct Ant{      
@@ -66,32 +74,29 @@ struct Ant{
         position = vector<int>(graph -> n);
     }
 
+    friend bool operator<(const Ant& lhs, const Ant& rhs) {
+        return (lhs.min_max_cost + 1e-4 < rhs.min_max_cost) || (abs(lhs.min_max_cost - rhs.min_max_cost) < 1e-4 && lhs.min_sum_cost + 1e-4 < rhs.min_sum_cost);
+    }
+
     void retag(int index);
     int longest_tour_index();
     int shortest_tour_index();
     double tour_length(_tour &tour);
-    double tour_distance(_tour &a, _tour &b);
 
     void add(int salesman, int vertex);
     void add(_tour &tour, int vertex);
     
-    bool swap(_tour &a, _tour &b,int idx_b);
     bool relocate(_tour &a, _tour &b, int idx_a, int idx_b);
-    bool swap_tail(_tour &a, _tour &b, int idx_a, int idx_b);
 
     bool two_opt_sweepline(_tour &tour, int idx);
-    bool two_opt(_tour &tour);
+    bool two_opt_inter_tour(_tour &a, _tour &b, int idx_a, int idx_b);
     bool or_opt(_tour &tour, int idx);
-    bool or_opt(_tour &tour);
     void run_dp(_tour &x, _tour &y);
     void run_tsp();
     void dp();
     void verify(int n);
 
     bool intra_tour_optimization();
-    void inter_tour_optimization();
-    bool intra_tour_optimization_del();
-    void inter_tour_optimization_del();
 
     void local_search();
     void end_tour();
